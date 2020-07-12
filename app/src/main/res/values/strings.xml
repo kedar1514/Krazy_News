@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Krazy News</string>
+    <string name="news_title">Common in India for good actors to not get opportunities: Saif</string>
+    <string name="news1">Talking about some of his Omkara co-actors, Saif Ali Khan said,
+        They come up purely through talent, while some of us,
+        frankly…had doors opened for us by privilege of our birth.
+        He further said that, therefore, earning their respect by performing well felt really important.
+        It happens a lot in India that good actors…dont get opportunities some privileged people do, Saif added.</string>
+    <string name="news2">Talking about some of his Omkara co-actors, Saif Ali Khan said,
+        They come up purely through talent, while some of us,
+        frankly…had doors opened for us by privilege of our birth.
+        He further said that, therefore, earning their respect by performing well felt really important.
+        It happens a lot in India that good actors…dont get opportunities some privileged people do, Saif added.</string>
+    <string name="news3">Talking about some of his Omkara co-actors, Saif Ali Khan said,
+        They come up purely through talent, while some of us,
+        frankly…had doors opened for us by privilege of our birth.
+        He further said that, therefore, earning their respect by performing well felt really important.
+        It happens a lot in India that good actors…dont get opportunities some privileged people do, Saif added.</string>
+
+    <string-array name="language">
+        <item>English</item>
+        <item>हिंदी</item>
+    </string-array>
+</resources>

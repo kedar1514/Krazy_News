@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.krazynews">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".NewsPopUp"></activity>
+        <activity android:name=".signin_siginup.SelectTopic" />
+        <activity android:name=".signin_siginup.GetEmail" />
+        <activity android:name=".signin_siginup.CityInput" />
+        <activity android:name=".signin_siginup.RegistrationName" />
+        <activity
+            android:name=".DashBoard"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Trending"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Bookmark"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Profile"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".signin_siginup.SignIn"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".signin_siginup.SignUp"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".signin_siginup.SignInSignUp"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustNothing" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+</manifest>
