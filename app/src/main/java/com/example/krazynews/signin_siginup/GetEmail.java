@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +39,15 @@ public class GetEmail extends AppCompatActivity {
     private LinearLayout long_text;
     private EditText get_email;
     private Button send_code;
+    private ProgressBar progressBar;
     private ImageView main_image;
     private boolean flag , otp_correct;
     private String OTP;
     private String name, city, user_email;
-    private String URL_OTP = "http://192.168.0.103/test/otp.php";
-    private String URL_OTP_VALIDATE = "http://192.168.0.103/test/otp_validate.php";
-    private String URL_EMAIL_CHECK = "http://192.168.0.103/test/emailCheck.php";
-    private String URL_REGISTER = "http://192.168.0.103/test/index.php";
+    private String URL_OTP = "https://krazynews.000webhostapp.com/app/otp.php";
+    private String URL_OTP_VALIDATE = "https://krazynews.000webhostapp.com/app/otp_validate.php";
+    private String URL_EMAIL_CHECK = "https://krazynews.000webhostapp.com/app/emailCheck.php";
+    private String URL_REGISTER = "https://krazynews.000webhostapp.com/app/index.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +60,8 @@ public class GetEmail extends AppCompatActivity {
         bold_text = findViewById(R.id.bold_text);
         long_text = findViewById(R.id.long_text);
         get_email = findViewById(R.id.edit_text);
+
+        progressBar = findViewById(R.id.sent_code_progressbar);
         send_code = findViewById(R.id.sent_code);
         main_image = findViewById(R.id.imageView);
         empty_email = findViewById(R.id.empty_email);
@@ -66,6 +70,8 @@ public class GetEmail extends AppCompatActivity {
         text_view2 = findViewById(R.id.text_view2);
         text_view3 = findViewById(R.id.text_view3);
 
+        send_code.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
         flag = false;
         send_code.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,10 +89,14 @@ public class GetEmail extends AppCompatActivity {
                     else
                     {
                         user_email = get_email.getText().toString().trim();
+                        send_code.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
                         emailExist(get_email.getText().toString().trim());
                     }
                 }
                 else{
+                    send_code.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
                     validateOTP(get_email.getText().toString().trim());
                 }
             }
@@ -107,8 +117,10 @@ public class GetEmail extends AppCompatActivity {
                                 pairs[0] = new Pair<View, String>(bold_text,"bold");
                                 pairs[1] = new Pair<View, String>(long_text,"long_text");
 
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Verified Succesfully", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(GetEmail.this, SelectTopic.class);
+                                Intent intent = new Intent(GetEmail.this, GetPassword.class);
                                 intent.putExtra("name", name);
                                 intent.putExtra("city", city);
                                 intent.putExtra("email", user_email);
@@ -124,10 +136,15 @@ public class GetEmail extends AppCompatActivity {
                                 }
                             }
                             else{
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 empty_email.setText("Invalid Otp");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            send_code.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(GetEmail.this, "Verification Error", Toast.LENGTH_LONG).show();
                         }
                     }
                 },
@@ -156,21 +173,30 @@ public class GetEmail extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
+//                            Log.i("tagconvertstr", "["+response+"]");
                             JSONObject jsonObject = new JSONObject(response);
                             String success = jsonObject.getString("success").toString();
-                            Toast.makeText(GetEmail.this, "Register Success!", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(GetEmail.this, "Register Success!", Toast.LENGTH_LONG).show();
                             if(success.equals("-1")){
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Mail Error!", Toast.LENGTH_LONG).show();
                             }
                             else if(success.equals("1")){
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Otp Sent", Toast.LENGTH_LONG).show();
                                 OTP = jsonObject.getString("message").toString();
                             }
                             else{
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Otp sent Failure", Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            send_code.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(GetEmail.this, "Register Error!" + e.toString(), Toast.LENGTH_LONG).show();
                         }
 
@@ -207,6 +233,8 @@ public class GetEmail extends AppCompatActivity {
                             String success = jsonObject.getString("success");
                             if(success.equals("1"))
                             {
+                                send_code.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
                                 empty_email.setText("Email already registered");
                             }
                             else
@@ -252,11 +280,11 @@ public class GetEmail extends AppCompatActivity {
     public void onBackPressed() {
         text_view1.setText("Tell us your ");
         text_view2.setText("Email");
-        text_view3.setText(" !");
+        text_view3.setText(" .");
         send_code.setText("Next");
         get_email.setText("");
         empty_email.setText("");
-        get_email.setHint("Enter Email");
+        get_email.setHint("Tell us your Email id");
         flag = false;
     }
 }

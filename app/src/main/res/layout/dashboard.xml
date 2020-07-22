@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/source_sans_pro"
                 android:gravity="center"
-                android:text="Discover new  topics"
+                android:text="Discover"
                 android:textColor="@color/colorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -93,7 +93,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/my_feed"
+                        android:id="@+id/all_news"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -120,7 +120,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/news_feed"
+                        android:id="@+id/my_feed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -132,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/source_sans_pro"
-                        android:text="All news"
+                        android:text="My Feed"
                         android:layout_marginBottom="5dp"
                         android:textColor="#101010"
                         android:textStyle="bold" />
@@ -159,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/source_sans_pro"
-                        android:text="All news"
+                        android:text="Top News"
                         android:textColor="#101010"
                         android:layout_marginBottom="5dp"
                         android:textStyle="bold" />
@@ -185,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/source_sans_pro"
-                        android:text="All news"
+                        android:text="Trending Now"
                         android:layout_marginBottom="5dp"
                         android:textColor="#101010"
                         android:textStyle="bold" />
@@ -211,7 +211,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/source_sans_pro"
-                        android:text="All news"
+                        android:text="Bookmarks"
                         android:layout_marginBottom="5dp"
                         android:textColor="#101010"
                         android:textStyle="bold" />
@@ -237,7 +237,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/source_sans_pro"
-                        android:text="All news"
+                        android:text="Unread"
                         android:layout_marginBottom="5dp"
                         android:textColor="#101010"
                         android:textStyle="bold" />
@@ -260,7 +260,7 @@
                 android:layout_height="100dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 app:cardCornerRadius="7dp"
                 android:outlineSpotShadowColor="@color/colorPrimary"
@@ -327,14 +327,13 @@
                 android:id="@+id/gridLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center"
                 android:columnCount="3"
                 android:orientation="vertical"
-                android:padding="10dp"
-                android:rowCount="3"
-                app:layout_constraintBottom_toTopOf="@+id/next"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:rowCount="3">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/corona"
@@ -344,13 +343,15 @@
                     android:layout_columnWeight="1"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
-                    app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp"
+                    android:layout_marginEnd="20dp"
+                    tools:targetApi="lollipop">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="1dp"
                         android:background="@drawable/topic_background">
-
                         <LinearLayout
                             android:id="@+id/linear_layout1"
                             android:layout_width="wrap_content"
@@ -359,8 +360,8 @@
                             android:orientation="vertical">
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="140dp"
+                                android:layout_width="100dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/coronaicon" />
 
@@ -394,11 +395,13 @@
                     android:layout_columnWeight="1"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
-                    app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp"
+                    tools:targetApi="lollipop">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="1dp"
                         android:background="@drawable/topic_background">
 
                         <LinearLayout
@@ -409,8 +412,8 @@
                             android:orientation="vertical">
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="140dp"
+                                android:layout_width="100dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/politicsicon" />
 
@@ -444,11 +447,13 @@
                     android:layout_columnWeight="1"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
-                    app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp"
+                    tools:targetApi="lollipop">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:padding="1dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
                         <LinearLayout
@@ -459,8 +464,8 @@
                             android:orientation="vertical">
 
                             <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="140dp"
+                                android:layout_width="100dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/startupicon" />
 
@@ -494,10 +499,12 @@
                     android:layout_columnWeight="1"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
-                    app:cardCornerRadius="10dp">
+                    app:cardCornerRadius="10dp"
+                    tools:targetApi="lollipop">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
+                        android:padding="1dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
@@ -510,7 +517,7 @@
 
                             <ImageView
                                 android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/indiaicon" />
 
@@ -548,7 +555,8 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:padding="1dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
                         <LinearLayout
@@ -560,7 +568,7 @@
 
                             <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/spertsicon" />
 
@@ -597,11 +605,9 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:padding="1dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
-
-
-
                         <LinearLayout
                             android:id="@+id/linear_layout6"
                             android:layout_width="wrap_content"
@@ -611,7 +617,7 @@
 
                             <ImageView
                                 android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/bollywoodicon" />
 
@@ -648,6 +654,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
+                        android:padding="1dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
@@ -660,7 +667,7 @@
 
                             <ImageView
                                 android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/businessicon" />
 
@@ -697,7 +704,8 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:padding="1dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
                         <LinearLayout
@@ -709,7 +717,7 @@
 
                             <ImageView
                                 android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/technologyicon" />
 
@@ -747,7 +755,8 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:padding="1dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/topic_background">
 
                         <LinearLayout
@@ -759,7 +768,7 @@
 
                             <ImageView
                                 android:layout_width="100dp"
-                                android:layout_height="140dp"
+                                android:layout_height="120dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/internationalicon" />
 
@@ -784,6 +793,8 @@
                     </RelativeLayout>
 
                 </androidx.cardview.widget.CardView>
+
+
             </GridLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

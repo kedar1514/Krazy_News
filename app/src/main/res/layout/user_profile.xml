@@ -30,9 +30,9 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/source_sans_pro"
                 android:gravity="center"
-                android:text="Krazy News"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
+                android:text="Settings"
+                android:textColor="@color/colorPrimary"
+                android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/aero_icon_user_profile"
@@ -53,19 +53,100 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
 
         <LinearLayout
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/profile_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:visibility="visible"
-                android:background="@color/colorPrimary">
+                android:weightSum="100"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/buttons">
+
+                <LinearLayout
+                    android:layout_weight="100"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:text="Kedar Choudhary"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:textColor="@color/text"
+                        />
+
+                    <TextView
+                        android:id="@+id/user_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginLeft="18dp"
+                        android:text="Kedar Choudhary"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:textColor="@color/text"
+                        />
+
+                    <TextView
+                        android:id="@+id/user_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginLeft="17dp"
+                        android:text="Pune"
+                        android:fontFamily="@font/source_sans_pro"
+                        android:textColor="@color/text"
+                        />
+
+                    <Button
+                        android:id="@+id/log_out"
+                        android:layout_width="90dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="15dp"
+                        android:text="Log Out"
+                        android:textAllCaps="false"
+                        android:background="@drawable/white_buttons"
+                        />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/settingsimage"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profile_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:background="@drawable/buttons">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -86,7 +167,7 @@
                     android:text="You are missing some amazing features."
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -105,7 +186,7 @@
                     android:layout_marginTop="7dp"
                     android:layout_marginBottom="15dp"
                     android:textColor="#272626"
-                    android:background="#FFFFFF"
+                    android:background="@drawable/white_buttons"
                     android:textStyle="bold"
                     android:fontFamily="@font/source_sans_pro"
                     />

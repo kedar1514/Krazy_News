@@ -18,29 +18,28 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SignInSignUp extends AppCompatActivity {
-    private LinearLayout skip;
     private Button sign_in;
     private Button register;
     private ImageView imageView;
-    private TextView textView;
+    private TextView textView, skip;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_signin);
 
-//        SharedPreferences preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
-//        String firstTime = preferences.getString("FirstTimeInstall","");
-//
-//        if(firstTime.equals("Yes"))
-//        {
-//            startActivity(new Intent(SignInSignUp.this,MainActivity.class));
-//            finish();
-//        }
-//        else{
-//            SharedPreferences.Editor editor = preferences.edit();
-//            editor.putString("FirstTimeInstall","Yes");
-//            editor.apply();
-//        }
+        SharedPreferences preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
+        String firstTime = preferences.getString("FirstTimeInstall","");
+
+        if(firstTime.equals("Yes"))
+        {
+            startActivity(new Intent(SignInSignUp.this,MainActivity.class));
+            finish();
+        }
+        else{
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("FirstTimeInstall","Yes");
+            editor.apply();
+        }
 
         skip = findViewById(R.id.skip);
         sign_in = findViewById(R.id.sign_in_page);

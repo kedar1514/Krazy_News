@@ -2,6 +2,7 @@ package com.example.krazynews;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,18 +12,86 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 //  <<,
 public class DashBoard extends Activity {
-    private boolean l1=false,l2=false,l3=false,l4=false,l5=false,l6=false,l7=false,l8=false,l9=false;
-    private ImageView check;
+    private ImageView check, my_feed, all_news, top_news, trending, bookmark, unread;
+    private SharedPreferences.Editor editor;
+    private  SharedPreferences preferences;
     private LinearLayout linearLayout1, linearLayout2, linearLayout3, linearLayout4, linearLayout5, linearLayout6, linearLayout7, linearLayout8, linearLayout9;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+
+        my_feed = findViewById(R.id.my_feed);
+        all_news = findViewById(R.id.all_news);
+        top_news = findViewById(R.id.top_news);
+        trending = findViewById(R.id.trending);
+        bookmark = findViewById(R.id.bookmark);
+        unread = findViewById(R.id.unread);
+
+        all_news.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.putString("allNews","true");
+                editor.putString("topNews","false");
+                editor.putString("trendingNews","false");
+                editor.apply();
+                startActivity(new Intent(DashBoard.this,MainActivity.class));
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
+            }
+        });
+
+        my_feed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.putString("allNews","false");
+                editor.putString("topNews","false");
+                editor.putString("trendingNews","false");
+                editor.apply();
+                startActivity(new Intent(DashBoard.this,MainActivity.class));
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
+            }
+        });
+//
+//        top_news.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        trending.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        bookmark.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        unread.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
         ImageView imageView = findViewById(R.id.aero_icon);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DashBoard.this,MainActivity.class));
+                editor.putString("allNews","false");
+                editor.putString("topNews","false");
+                editor.putString("trendingNews","false");
+                editor.apply();
+                Intent intent = new Intent(DashBoard.this,MainActivity.class);
+                startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 finish();
             }
@@ -38,6 +107,11 @@ public class DashBoard extends Activity {
             }
         });
 
+        preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
+        editor = preferences.edit();
+
+        checkTopic();
+
         linearLayout1 = findViewById(R.id.linear_layout1);
         linearLayout2 = findViewById(R.id.linear_layout2);
         linearLayout3 = findViewById(R.id.linear_layout3);
@@ -52,15 +126,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check1);
-                if(!l1)
+                String string = preferences.getString("corona","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l1=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("corona","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l1=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("corona","visible");
+                    editor.apply();
                 }
             }
         });
@@ -69,15 +146,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check2);
-                if(!l2)
+                String string = preferences.getString("politics","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l2=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("politics","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l2=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("politics","visible");
+                    editor.apply();
                 }
             }
         });
@@ -86,15 +166,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check3);
-                if(!l3)
+                String string = preferences.getString("startup","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l3=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("startup","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l3=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("startup","visible");
+                    editor.apply();
                 }
             }
         });
@@ -103,15 +186,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check4);
-                if(!l4)
+                String string = preferences.getString("india","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l4=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("india","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l4=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("india","visible");
+                    editor.apply();
                 }
             }
         });
@@ -120,15 +206,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check5);
-                if(!l5)
+                String string = preferences.getString("sports","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l5=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("sports","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l5=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("sports","visible");
+                    editor.apply();
                 }
             }
         });
@@ -137,15 +226,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check6);
-                if(!l6)
+                String string = preferences.getString("bollywood","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l6=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("bollywood","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l6=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("bollywood","visible");
+                    editor.apply();
                 }
             }
         });
@@ -154,15 +246,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check7);
-                if(!l7)
+                String string = preferences.getString("business","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l7=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("business","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l7=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("business","visible");
+                    editor.apply();
                 }
             }
         });
@@ -171,15 +266,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check8);
-                if(!l8)
+                String string = preferences.getString("technology","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l8=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("technology","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l8=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("technology","visible");
+                    editor.apply();
                 }
             }
         });
@@ -188,15 +286,18 @@ public class DashBoard extends Activity {
             @Override
             public void onClick(View v) {
                 check = findViewById(R.id.check9);
-                if(!l9)
+                String string = preferences.getString("international","");
+                if(string.equals("visible"))
                 {
-                    check.setVisibility(View.VISIBLE);
-                    l9=true;
+                    check.setVisibility(View.GONE);
+                    editor.putString("international","gone");
+                    editor.apply();
                 }
                 else
                 {
-                    check.setVisibility(View.GONE);
-                    l9=false;
+                    check.setVisibility(View.VISIBLE);
+                    editor.putString("international","visible");
+                    editor.apply();
                 }
             }
         });
@@ -218,9 +319,81 @@ public class DashBoard extends Activity {
 //        });
     }
 
+    public void checkTopic(){
+        String corona = preferences.getString("corona","");
+        String politics = preferences.getString("politics","");
+        String startup = preferences.getString("startup","");
+        String india = preferences.getString("india","");
+        String sports = preferences.getString("sports","");
+        String bollywood = preferences.getString("bollywood","");
+        String business = preferences.getString("business","");
+        String technology = preferences.getString("technology","");
+        String international = preferences.getString("international","");
+
+        if(corona.equals("visible"))
+        {
+            check = findViewById(R.id.check1);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(politics.equals("visible"))
+        {
+            check = findViewById(R.id.check2);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(startup.equals("visible"))
+        {
+            check = findViewById(R.id.check3);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(india.equals("visible"))
+        {
+            check = findViewById(R.id.check4);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(sports.equals("visible"))
+        {
+            check = findViewById(R.id.check5);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(bollywood.equals("visible"))
+        {
+            check = findViewById(R.id.check6);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(business.equals("visible"))
+        {
+            check = findViewById(R.id.check7);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(technology.equals("visible"))
+        {
+            check = findViewById(R.id.check8);
+            check.setVisibility(View.VISIBLE);
+        }
+
+        if(international.equals("visible"))
+        {
+            check = findViewById(R.id.check9);
+            check.setVisibility(View.VISIBLE);
+        }
+    }
+
+
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(DashBoard.this,MainActivity.class));
+        editor.putString("allNews","false");
+        editor.putString("topNews","false");
+        editor.putString("trendingNews","false");
+        editor.apply();
+        Intent intent = new Intent(DashBoard.this,MainActivity.class);
+        startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         finish();
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.krazynews">
-    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".NewsPopUp"></activity>
+        <activity android:name=".signin_siginup.ChooseTopicSignIn"></activity>
+        <activity android:name=".NewsLink" />
+        <activity android:name=".ToolBar" />
+        <activity android:name=".LoadingAcitvity" />
+        <activity android:name=".signin_siginup.GetPassword" />
+        <activity android:name=".NewsPopUp" />
         <activity android:name=".signin_siginup.SelectTopic" />
         <activity android:name=".signin_siginup.GetEmail" />
         <activity android:name=".signin_siginup.CityInput" />
@@ -49,4 +54,7 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

@@ -20,9 +20,9 @@
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
 
-    <style name="DialogTheme">
-        <item name="android:windowEnterAnimation">@anim/slide_up</item>
-        <item name="android:windowExitAnimation">@anim/slide_bottom</item>
+    <style name="ToolbarTheme">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_up</item>
     </style>
 
     <style name="DialogAnimationFade">
@@ -38,5 +38,16 @@
         <!-- Gets rid of the search icon when the SearchView is expanded -->
         <item name="searchHintIcon">@null</item>
         <!-- The hint text that appears when the user has not typed anything -->
+    </style>
+
+    <style name="Theme_Dialog" parent="android:Theme.Holo.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 </resources>

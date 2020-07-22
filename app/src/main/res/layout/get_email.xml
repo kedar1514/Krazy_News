@@ -76,13 +76,22 @@
 
     <TextView
         android:id="@+id/empty_email"
-        android:layout_width="match_parent"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
         android:textColor="#FF0000"
         android:layout_gravity="center"/>
 
+    <ProgressBar
+        android:id="@+id/sent_code_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:indeterminateTint="@color/colorPrimary"
+        android:visibility="gone"/>
+
     <Button
+        android:visibility="visible"
         android:id="@+id/sent_code"
         android:layout_width="150dp"
         android:layout_height="wrap_content"

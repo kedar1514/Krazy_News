@@ -55,13 +55,14 @@
 
         <GridLayout
             android:id="@+id/gridLayout2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_gravity="center"
             android:columnCount="3"
             android:orientation="vertical"
-            android:padding="10dp"
             android:rowCount="3">
 
             <androidx.cardview.widget.CardView
