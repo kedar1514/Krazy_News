@@ -61,7 +61,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 intent.putExtra(Intent.EXTRA_SUBJECT, sliderItems.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra(Intent.EXTRA_TEXT, sliderItems.get(holder.getAdapterPosition()).getTitle() + " (@ Krazyfox.in ) \n" + sliderItems.get(holder.getAdapterPosition()).getNews_link());
                 intent.setType("text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(Intent.createChooser(intent, "Send To"));
             }
         });
