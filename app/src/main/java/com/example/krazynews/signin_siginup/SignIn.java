@@ -43,7 +43,7 @@ public class SignIn extends AppCompatActivity {
                     "(?=\\S+$)" +           //no white spaces
                     ".{4,}" +               //at least 4 characters
                     "$"));
-    private TextView email_warrning, password_warrning;
+    private TextView email_warrning, password_warrning, forgotPassword;
     private EditText email, password;
     private Button signIn;
     private ProgressBar progressBar;
@@ -59,6 +59,7 @@ public class SignIn extends AppCompatActivity {
         email_warrning = findViewById(R.id.sign_in_email_warrning);
         password = findViewById(R.id.sign_in_password);
         password_warrning = findViewById(R.id.sign_in_password_warrning);
+        forgotPassword = findViewById(R.id.forgot_password);
 
         signIn.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -72,6 +73,13 @@ public class SignIn extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     login();
                 }
+            }
+        });
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

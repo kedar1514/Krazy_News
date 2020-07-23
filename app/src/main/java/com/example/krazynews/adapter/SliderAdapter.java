@@ -58,10 +58,10 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(Intent.EXTRA_SUBJECT, sliderItems.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra(Intent.EXTRA_TEXT, sliderItems.get(holder.getAdapterPosition()).getTitle() + " (@ Krazyfox.in ) \n" + sliderItems.get(holder.getAdapterPosition()).getNews_link());
                 intent.setType("text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 c.startActivity(Intent.createChooser(intent, "Send To"));
             }
         });

@@ -26,10 +26,11 @@
         android:fontFamily="@font/source_sans_pro_bold"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginLeft="20dp"/>
+        android:layout_marginLeft="20dp"
+        android:transitionName="bold_text"/>
 
     <LinearLayout
-        android:transitionName="random_text"
+        android:transitionName="long_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -67,7 +68,8 @@
         android:textSize="19sp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="Email"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress"
+        android:transitionName="email_input"/>
 
     <TextView
         android:id="@+id/sign_in_email_warrning"
@@ -120,6 +122,7 @@
         android:background="@drawable/buttons"
         android:transitionName="sign_in"/>
     <TextView
+        android:id="@+id/forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forgot password?"
