@@ -25,6 +25,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.TextUtils;
 import android.transition.AutoTransition;
 import android.transition.Slide;
 import android.transition.TransitionManager;
@@ -42,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -60,7 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 //  <<,
 public class MainActivity extends AppCompatActivity {
-    private boolean categories_flag;
+    private boolean categories_flag, toolbarFlag;
     private SharedPreferences.Editor editor;
     private  SharedPreferences preferences;
     private Dialog myDialog, fullDialog;
@@ -69,16 +72,13 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private List<SliderItem> sliderItems;
     private ViewPropertyAnimator animate;
+    private View shimer_home_page;
     private boolean flag;
-    private String URL_NEWS = "https://krazynews.000webhostapp.com/api/post.php";
-    private String URL_IMAGE = "https://krazynews.000webhostapp.com", temp_str;
+    private String URL_NEWS = "https://www.krazyfox.in/krazynews/api/post.php";
+    private String URL_IMAGE = "https://www.krazyfox.in/krazynews", temp_str;
+    private String language;
     private ProgressBar progressBar;
-    //variable declaration for poll card
-    private boolean pollFlag;
-    private LinearLayout first, second, third;
-    private ConstraintLayout firstClickColour,secondClickColour,thirdClickColour;
-    private TextView firstOptionPercentage, secondOptionPercentage, thirdOptionPercentage, submit;
-    private int page=1, count=10, itemNum=0;
+    private int page=1, count=20, itemNum=0;
     @SuppressLint({"ResourceType", "ClickableViewAccessibility"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +90,13 @@ public class MainActivity extends AppCompatActivity {
         fullDialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         fullDialog.setContentView(R.layout.activity_loading_acitvity);
         fullDialog.show();
+        toolbarFlag = true;
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().hide();
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar_name = findViewById(R.id.toolbar_name);
 
         if(all_news.equals("true"))
@@ -105,9 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        progressBar = findViewById(R.id.news_loading);
-        marquee = findViewById(R.id.floatingText);
-        marquee.setSelected(true);
+        shimer_home_page = findViewById(R.id.shimmer_loading);
         ImageView imageView = findViewById(R.id.dashboard_icon);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,11 +126,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if(position+1 == sliderItems.size()){
-                    progressBar.setVisibility(View.VISIBLE);
                     getData(++page,count);
                 }
                 else{
-                    progressBar.setVisibility(View.GONE);
                 }
             }
 
@@ -148,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         };
         viewPager2.registerOnPageChangeCallback(pageChangeCallback);
         CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-        compositePageTransformer.addTransformer(new MarginPageTransformer(0));
+        compositePageTransformer.addTransformer(new MarginPageTransformer(250));
         compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
             @Override
             public void transformPage(@NonNull View page, float position) {
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getData(int page, int count){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://krazynews.000webhostapp.com/api/")
+                .baseUrl("https://www.krazyfox.in/krazynews/api/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
@@ -170,13 +168,19 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("tagconvertstr", "["+response+"]");
+//                Log.d("tagconvertstr", "["+response+"]");
+                Log.d("tagconvertstr", "["+response.body()+"]");
                 if(response.isSuccessful() && response.body() != null){
                     try {
                         JSONArray jsonArray = new JSONArray(response.body());
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        Log.d("tagconvertstr", "["+response.isSuccessful()+"]");
+                        String title = jsonObject.getString("title");
+                        Log.d("tagconvertstr", "["+title+"]");
                         parseResult(jsonArray);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.d("tagconvertstr", "["+e+"]");
                     }
                 }
             }
@@ -202,21 +206,22 @@ public class MainActivity extends AppCompatActivity {
             toolbar_name.setText("All News");
         }
         fullDialog.hide();
-        progressBar.setVisibility(View.GONE);
+
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 SliderItem sliderItem = new SliderItem();
                 sliderItem.setImage(URL_IMAGE + jsonObject.getString("displaypicture").substring(2));
-                sliderItem.setTitle(jsonObject.getString("title").toString());
-                sliderItem.setText(jsonObject.getString("description").toString());
+                sliderItem.setTitle(jsonObject.getString("title"));
+                sliderItem.setText(jsonObject.getString("description"));
                 sliderItem.setNews_link(jsonObject.getString("publisherURL").toString());
-//                        sliderItem.setNews_by(jsonObject.getString("author").toString());
                 sliderItem.setNews_by("by Rudra Ghodke");
-//                        sliderItems.add(sliderItem);
-
+                sliderItem.setId(jsonObject.getString("id").toString());
+                sliderItem.setPollQuestion(jsonObject.getString("poleQuestion"));
+                sliderItem.setYes(jsonObject.getString("poleYes"));
+                sliderItem.setNo(jsonObject.getString("poleNo"));
+                sliderItem.setMaybe(jsonObject.getString("poleMaybe"));
                 String categories = jsonObject.getString("categories").toString();
-
                 if (categories_flag == false || all_news.equals("true")) {
                     sliderItems.add(sliderItem);
                 } else if (categories_flag) {
@@ -292,131 +297,8 @@ public class MainActivity extends AppCompatActivity {
             viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
         }
         viewPager2.setCurrentItem(itemNum-1,false);
-        itemNum += 10;
+        itemNum += 20;
     }
-//    private void getData(int page, int count){
-//        categories_flag = false;
-//        if(preferences.getString("corona","").equals("visible")||preferences.getString("politics","").equals("visible")||
-//                preferences.getString("startup","").equals("visible")||preferences.getString("india","").equals("visible")||
-//                preferences.getString("sports","").equals("visible")||preferences.getString("bollywood","").equals("visible")||
-//                preferences.getString("business","").equals("visible")||preferences.getString("technology","").equals("visible")||
-//                preferences.getString("international","").equals("visible")){
-//            categories_flag=true;
-//        }
-//
-//        if(categories_flag==false || all_news.equals("true"))
-//        {
-//            toolbar_name.setText("All News");
-//        }
-//
-//        RequestQueue queue = Volley.newRequestQueue(this);
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL_NEWS, null, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                fullDialog.hide();
-//                for (int i = response.length() - 1; i >= 0; i--) {
-//                    try {
-//                        JSONObject jsonObject = response.getJSONObject(i);
-//                        SliderItem sliderItem = new SliderItem();
-//                        temp_str = jsonObject.getString("displaypicture").toString();
-//                        sliderItem.setImage(URL_IMAGE + temp_str.substring(2));
-//                        sliderItem.setTitle(jsonObject.getString("title").toString());
-//                        sliderItem.setText(jsonObject.getString("description").toString());
-//                        sliderItem.setNews_link(jsonObject.getString("publisherURL").toString());
-////                        sliderItem.setNews_by(jsonObject.getString("author").toString());
-//                        sliderItem.setNews_by("by Rudra Ghodke");
-////                        sliderItems.add(sliderItem);
-//
-//                        String categories = jsonObject.getString("categories").toString();
-//
-//                        if(categories_flag==false || all_news.equals("true"))
-//                        {
-//                            sliderItems.add(sliderItem);
-//                        }
-//                        else if(categories_flag){
-//                            switch(categories)
-//                            {
-//                                case "Corona":  if(preferences.getString("corona","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "Politics":if(preferences.getString("politics","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "Startups":if(preferences.getString("startup","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "India":   if(preferences.getString("india","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "soirts":  if(preferences.getString("sports","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "Bollywood":if(preferences.getString("bollywood","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "Business":if(preferences.getString("business","").equals("visible"))
-//                                                {
-//                                                    sliderItems.add(sliderItem);
-//                                                }
-//                                                break;
-//
-//                                case "Technology":  if(preferences.getString("technology","").equals("visible"))
-//                                                    {
-//                                                        sliderItems.add(sliderItem);
-//                                                    }
-//                                                    break;
-//
-//                                case "International":if(preferences.getString("international","").equals("visible"))
-//                                                    {
-//                                                        sliderItems.add(sliderItem);
-//                                                    }
-//                                                    break;
-//
-//                                case "Entertainment":if(preferences.getString("entertainment","").equals("visible"))
-//                                                    {
-//                                                        sliderItems.add(sliderItem);
-//                                                    }
-//                                                    break;
-//                            }
-//                        }
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    viewPager2.setAdapter(new SliderAdapter(getApplicationContext(),sliderItems, viewPager2));
-//                    viewPager2.setClipToPadding(false);
-//                    viewPager2.setClipChildren(false);
-//                    viewPager2.setOffscreenPageLimit(3);
-//                    viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-//                }
-//            }
-//        },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.d("tag", "onErrorResponse: " + error.getMessage());
-//                    }
-//                });
-//        queue.add(jsonArrayRequest);
-//    }
 
     public void ShowNewsPopUp(View v){
         myDialog.setContentView(R.layout.activity_news_pop_up);
@@ -438,123 +320,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void ShowPoll(View v){
-        myDialog.setContentView(R.layout.poll_layout);
-        myDialog.getWindow().setGravity(Gravity.CENTER);
-        myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimationFade;
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        pollFlag = false;
-
-        submit = myDialog.findViewById(R.id.submit);
-
-        first = myDialog.findViewById(R.id.first);
-        second = myDialog.findViewById(R.id.second);
-        third = myDialog.findViewById(R.id.third);
-
-        firstClickColour = myDialog.findViewById(R.id.firstClickColour);
-        secondClickColour = myDialog.findViewById(R.id.secondClickColour);
-        thirdClickColour = myDialog.findViewById(R.id.thirdClickColour);
-
-        firstOptionPercentage = myDialog.findViewById(R.id.firstOptionPercentage);
-        secondOptionPercentage = myDialog.findViewById(R.id.secondOptionPercentage);
-        thirdOptionPercentage = myDialog.findViewById(R.id.thirdOptionPercentage);
-
-        first.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!pollFlag){
-                    first.setBackgroundResource(R.drawable.poll_selected_stroke);
-                    pollFlag = true;
-                    firstClickColour.getBackground().setLevel(6000);
-                    firstOptionPercentage.setText("60%");
-                    firstOptionPercentage.setVisibility(View.VISIBLE);
-
-                    secondClickColour.getBackground().setLevel(1000);
-                    secondOptionPercentage.setText("10%");
-                    secondOptionPercentage.setVisibility(View.VISIBLE);
-
-                    thirdClickColour.getBackground().setLevel(3000);
-                    thirdOptionPercentage.setText("30%");
-                    thirdOptionPercentage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        second.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!pollFlag){
-                    pollFlag = true;
-                    second.setBackgroundResource(R.drawable.poll_selected_stroke);
-                    GradientDrawable drawable = (GradientDrawable)second.getBackground();
-                    drawable.setStroke(10, 0xFFFD676C);
-
-                    firstClickColour.getBackground().setLevel(6000);
-                    firstOptionPercentage.setText("60%");
-                    firstOptionPercentage.setVisibility(View.VISIBLE);
-
-                    secondClickColour.getBackground().setLevel(1000);
-                    secondOptionPercentage.setText("10%");
-                    secondOptionPercentage.setVisibility(View.VISIBLE);
-
-                    thirdClickColour.getBackground().setLevel(3000);
-                    thirdOptionPercentage.setText("30%");
-                    thirdOptionPercentage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        third.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!pollFlag){
-                    pollFlag = true;
-                    third.setBackgroundResource(R.drawable.poll_selected_stroke);
-                    firstClickColour.getBackground().setLevel(6000);
-                    firstOptionPercentage.setText("60%");
-                    firstOptionPercentage.setVisibility(View.VISIBLE);
-
-                    secondClickColour.getBackground().setLevel(1000);
-                    secondOptionPercentage.setText("10%");
-                    secondOptionPercentage.setVisibility(View.VISIBLE);
-
-                    thirdClickColour.getBackground().setLevel(3000);
-                    thirdOptionPercentage.setText("30%");
-                    thirdOptionPercentage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        myDialog.show();
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDialog.hide();
-            }
-        });
-    }
-
-    public void toolbarPopUp(View view){
-        myDialog = new Dialog(this, R.style.Theme_Dialog);
-        myDialog.setContentView(R.layout.activity_tool_bar);
-        myDialog.getWindow().setGravity(Gravity.TOP);
-//        myDialog.getWindow().getAttributes().windowAnimations = R.style.ToolbarTheme;
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        myDialog.show();
-
-        ImageView imageView = myDialog.findViewById(R.id.dashboard_icon);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent =  new Intent(MainActivity.this,DashBoard.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-                finish();
-            }
-        });
-
-
+    public void hideShowBar(View view){
+        if(toolbarFlag){
+            getSupportActionBar().show();
+            toolbarFlag = false;
+        }
+        else{
+            getSupportActionBar().hide();
+            toolbarFlag = true;
+        }
     }
 
     @Override

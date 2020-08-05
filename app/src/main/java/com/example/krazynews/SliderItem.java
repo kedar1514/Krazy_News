@@ -1,23 +1,31 @@
 package com.example.krazynews;
 
 import android.media.Image;
+import android.view.View;
 import android.widget.ImageView;
+
+import com.like.LikeButton;
 
 import androidx.cardview.widget.CardView;
 
 public class SliderItem {
-    private String image,text,title,news_by,news_time, news_link;
+    private String id,image,text,title,news_by,news_time, news_link, pollQuestion,yes,no,maybe;
     private ImageView share;
+    private View shimmerLoading;
+    private LikeButton bookmark, likeButton;
 
     public SliderItem() {}
 
-    public SliderItem(String image, String text, String title, String news_time, String news_link)
+    public SliderItem(String id, String image, String text, String title, String news_time, String news_link, LikeButton bookmark, LikeButton likeButton)
     {
+        this.id = id;
         this.image = image;
         this.text = text;
         this.title = title;
         this.news_time = news_time;
         this.news_link = news_link;
+        this.bookmark = bookmark;
+        this.likeButton = likeButton;
     }
 
     public String getTitle() {
@@ -53,4 +61,19 @@ public class SliderItem {
 
     public void setNews_link(String news_link) { this.news_link = news_link; }
     public String getNews_link() { return news_link; }
+
+    public void setId(String id) { this.id = id;}
+    public String getId(){return id;}
+
+    public void setPollQuestion(String pollQuestion){ this.pollQuestion = pollQuestion;};
+    public String getPollQuestion(){return pollQuestion;}
+
+    public String getYes() { return yes; }
+    public void setYes(String yes) { this.yes = yes; }
+
+    public String getNo() { return no; }
+    public void setNo(String no) { this.no = no; }
+
+    public String getMaybe() { return maybe; }
+    public void setMaybe(String maybe) { this.maybe = maybe; }
 }

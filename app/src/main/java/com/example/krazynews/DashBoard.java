@@ -7,6 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -15,6 +31,7 @@ public class DashBoard extends Activity {
     private ImageView check, my_feed, all_news, top_news, trending, bookmark, unread;
     private SharedPreferences.Editor editor;
     private  SharedPreferences preferences;
+    private String userEmail;
     private LinearLayout linearLayout1, linearLayout2, linearLayout3, linearLayout4, linearLayout5, linearLayout6, linearLayout7, linearLayout8, linearLayout9;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,12 +85,15 @@ public class DashBoard extends Activity {
 //            }
 //        });
 //
-//        bookmark.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =  new Intent(DashBoard.this,Bookmark.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
+                finish();
+            }
+        });
 //
 //        unread.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -384,7 +404,6 @@ public class DashBoard extends Activity {
             check.setVisibility(View.VISIBLE);
         }
     }
-
 
     @Override
     public void onBackPressed() {

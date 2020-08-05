@@ -25,10 +25,10 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/dashboard_icon"
+                android:id="@+id/back_icon"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_dashboard_name"
+                android:src="@drawable/ic_back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,12 +38,14 @@
                 android:layout_height="match_parent"
                 android:fontFamily="@font/source_sans_pro"
                 android:gravity="center"
-                android:text="Krazy News"
-                android:textColor="@android:color/black"
+                android:text="Bookmark"
+                android:textColor="@color/colorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -56,8 +58,4 @@
             android:layout_height="match_parent"
             android:id="@+id/bookmark_recyclerView"/>
     </androidx.core.widget.NestedScrollView>
-
-
-
-
 </LinearLayout>

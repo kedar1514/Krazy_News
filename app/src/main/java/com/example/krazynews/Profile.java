@@ -15,9 +15,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.krazynews.signin_siginup.CityInput;
 import com.example.krazynews.signin_siginup.SignIn;
 import com.example.krazynews.signin_siginup.SignInSignUp;
+
+import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,10 +30,13 @@ import androidx.appcompat.widget.AppCompatTextView;
 public class Profile extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     //  <<,
     private Dialog dialog;
+    private SharedPreferences.Editor editor;
     private SharedPreferences preferences;
     private LinearLayout profileInfo, profileSignIn;
     private Button signIn, logOut, no, yes;
     private TextView userName, userEmail, userCity;
+    private Spinner languageSpinner;
+    private ArrayList<String> languageList;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +55,47 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
         userName = findViewById(R.id.user_name);
         userEmail = findViewById(R.id.user_email);
         userCity = findViewById(R.id.user_city);
+        languageSpinner = findViewById(R.id.language_spinner);
 
         preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
         String loggedIn = preferences.getString("Login","");
+        String language = preferences.getString("language","");
+        languageList = new ArrayList<>();
+        languageList.add("English");
+        languageList.add("हिन्दी");
+        languageSpinner.setAdapter(new ArrayAdapter<>(Profile.this,
+                android.R.layout.simple_spinner_dropdown_item,languageList));
+
+        if(language.equals("Hindi"))
+        {
+            languageSpinner.setSelection(1);
+        }
+        else
+        {
+            languageSpinner.setSelection(0);
+        }
+
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0) {
+                    editor = preferences.edit();
+                    editor.putString("language","English");
+                    editor.apply();
+                }
+                else{
+                    editor = preferences.edit();
+                    editor.putString("language","Hindi");
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         if(loggedIn.equals("YES"))
         {
@@ -67,7 +112,7 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
         }
         else
         {
-            SharedPreferences.Editor editor = preferences.edit();
+            editor = preferences.edit();
             editor.putString("FirstTimeInstall","NO");
             editor.apply();
             profileSignIn.setVisibility(View.VISIBLE);
@@ -115,11 +160,6 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
             }
         });
 
-        Spinner spinner = findViewById(R.id.language_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.language,android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
         ImageView imageView = findViewById(R.id.aero_icon_user_profile);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,11 +172,6 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
         });
     }
 
-//    @Override
-//    public void finish() {
-//        super.finish();
-//        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-//    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

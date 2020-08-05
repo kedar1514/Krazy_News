@@ -5,6 +5,6 @@
     <color name="colorAccent">#AE00FF</color>
     <color name="colorShadow">#FFFFFF</color>
     <color name="appBar">#FFFFFF</color>
-    <color name="shimmer">#dddddd</color>
+    <color name="shimmer">#bababa</color>
     <color name="text">#FFFFFF</color>
 </resources>

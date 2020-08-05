@@ -1,13 +1,17 @@
 package com.example.krazynews.signin_siginup;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.krazynews.ForgotPasswordEmail;
 import com.example.krazynews.MainActivity;
 import com.example.krazynews.R;
 
@@ -43,10 +48,12 @@ public class SignIn extends AppCompatActivity {
                     "(?=\\S+$)" +           //no white spaces
                     ".{4,}" +               //at least 4 characters
                     "$"));
-    private TextView email_warrning, password_warrning, forgotPassword;
+    private TextView email_warrning, password_warrning, forgotPassword, boldText;
     private EditText email, password;
     private Button signIn;
+    private LinearLayout longText;
     private ProgressBar progressBar;
+    private ImageView logo;
     private String URL_LOGIN = "https://krazynews.000webhostapp.com/app/login.php";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +67,9 @@ public class SignIn extends AppCompatActivity {
         password = findViewById(R.id.sign_in_password);
         password_warrning = findViewById(R.id.sign_in_password_warrning);
         forgotPassword = findViewById(R.id.forgot_password);
+        boldText = findViewById(R.id.bold_text);
+        longText = findViewById(R.id.long_text);
+        logo = findViewById(R.id.logo);
 
         signIn.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -79,7 +89,20 @@ public class SignIn extends AppCompatActivity {
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Pair[] pairs = new Pair[4];
+                pairs[0] = new Pair<View, String>(boldText,"bold");
+                pairs[1] = new Pair<View, String>(longText,"long_text");
+                pairs[2] = new Pair<View, String>(logo,"main_image");
+                pairs[3] = new Pair<View, String>(signIn,"sign_in_btn");
 
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SignIn.this,pairs);
+                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class), options.toBundle());
+                }
+                else{
+                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class));
+                }
+                finish();
             }
         });
     }
