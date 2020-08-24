@@ -2,8 +2,14 @@ package com.example.krazynews.signin_siginup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +42,7 @@ public class SelectTopic extends AppCompatActivity {
     private String name, city, user_email, password;
     private Integer topicCount;
     private ImageView check;
-    private String URL_REGISTER = "https://krazynews.000webhostapp.com/app/index.php";
+    private String URL_REGISTER = "https://www.krazyfox.in/krazynews/app/index.php";
     private LinearLayout linearLayout1, linearLayout2, linearLayout3, linearLayout4, linearLayout5, linearLayout6, linearLayout7, linearLayout8, linearLayout9;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,7 @@ public class SelectTopic extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerProcess();
+                tryToConnectWithServer();
             }
         });
 
@@ -562,6 +568,47 @@ public class SelectTopic extends AppCompatActivity {
         {
             check = findViewById(R.id.check9);
             check.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public boolean checkConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        final Dialog networkDialog = new Dialog(this);
+        networkDialog.setContentView(R.layout.network_dialog);
+        networkDialog.setCanceledOnTouchOutside(false);
+        networkDialog.setCancelable(false);
+//        networkDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        networkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        networkDialog.getWindow().getAttributes().windowAnimations =
+                android.R.style.Animation_Dialog;
+
+        Button btnTryAgain = networkDialog.findViewById(R.id.try_again);
+
+        if(networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()){
+
+
+            btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    networkDialog.hide();
+                    tryToConnectWithServer();
+                }
+            });
+            networkDialog.show();
+            return false;
+        }else{
+            networkDialog.hide();
+            return true;
+        }
+    }
+
+    void tryToConnectWithServer()
+    {
+        if(checkConnection())
+        {
+            registerProcess();
         }
     }
 }

@@ -2,10 +2,13 @@ package com.example.krazynews;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -59,14 +62,14 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
 
         preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
         String loggedIn = preferences.getString("Login","");
-        String language = preferences.getString("language","");
+        String language = preferences.getString("lang","");
         languageList = new ArrayList<>();
         languageList.add("English");
         languageList.add("हिन्दी");
         languageSpinner.setAdapter(new ArrayAdapter<>(Profile.this,
                 android.R.layout.simple_spinner_dropdown_item,languageList));
 
-        if(language.equals("Hindi"))
+        if(language.equals("hindi"))
         {
             languageSpinner.setSelection(1);
         }
@@ -80,12 +83,12 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position == 0) {
                     editor = preferences.edit();
-                    editor.putString("language","English");
+                    editor.putString("lang","english");
                     editor.apply();
                 }
                 else{
                     editor = preferences.edit();
-                    editor.putString("language","Hindi");
+                    editor.putString("lang","hindi");
                     editor.apply();
                 }
             }
@@ -144,7 +147,10 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
+                if(checkConnection())
+                {
+                    dialog.show();
+                }
             }
         });
 
@@ -181,6 +187,42 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public boolean checkConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        final Dialog networkDialog = new Dialog(this);
+        networkDialog.setContentView(R.layout.network_dialog);
+        networkDialog.setCanceledOnTouchOutside(false);
+        networkDialog.setCancelable(false);
+//        networkDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        networkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        networkDialog.getWindow().getAttributes().windowAnimations =
+                android.R.style.Animation_Dialog;
+
+        Button btnTryAgain = networkDialog.findViewById(R.id.try_again);
+
+        if(networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()){
+
+
+            btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    networkDialog.hide();
+                    if(checkConnection())
+                    {
+                        dialog.show();
+                    }
+                }
+            });
+            networkDialog.show();
+            return false;
+        }else{
+            networkDialog.hide();
+            return true;
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.krazynews.adapter;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +34,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.krazynews.MainActivity;
+import com.example.krazynews.NewsLink;
 import com.example.krazynews.Profile;
 import com.example.krazynews.R;
 import com.example.krazynews.SliderItem;
@@ -43,12 +46,14 @@ import com.like.OnLikeListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -62,6 +67,10 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     private TextView firstOptionPercentage, secondOptionPercentage, thirdOptionPercentage, submit;
     private TextView firstOption, secondOption, thirdOption, pollQuestion;
     private Dialog myDialog;
+
+    // newsLink
+    private ArrayList<String> newsImages = new ArrayList<>();
+    private ArrayList<String> newsUrls = new ArrayList<>();
 
     private List<SliderItem> sliderItems;
     private ViewPager2 viewPager2;
@@ -82,13 +91,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     @Override
     public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         popContext = parent.getContext();
-        return new SliderViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.slide_item_container,
-                        parent,
-                        false
-                )
-        );
+        return new SliderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.slide_item_container, parent, false));
     }
 
     @Override
@@ -101,6 +104,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         holder.setTitleView(sliderItems.get(position));
         holder.setNews_byView(sliderItems.get(position));
         holder.setNewsTimeView(sliderItems.get(position));
+        holder.likeButton.setLiked(false);
         if(sliderItems.get(position).getPollQuestion().equals(""))
         {
             holder.poll.setVisibility(View.GONE);
@@ -123,17 +127,34 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             holder.shimmer.setVisibility(View.GONE);
         }
 
+        holder.newsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newsImages = sliderItems.get(position).getNewsImages();
+                newsUrls = sliderItems.get(position).getNewsUrls();
+                ShowNewsPopUp();
+            }
+        });
+
         holder.bookmark.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton bookmark) {
-                preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
-                id = sliderItems.get(position).getId();
-                email = preferences.getString("UserEmail","");
-                url = "http/dkjhssjhfsd";
-                image = sliderItems.get(position).getImage();
-                title = sliderItems.get(position).getTitle();
-                flag = "1";
-                bookmarkNews();
+
+                if(isLoggedin())
+                {
+                    preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
+                    id = sliderItems.get(position).getId();
+                    email = preferences.getString("UserEmail","");
+                    url = sliderItems.get(position).getNewsUrls().get(0);
+                    image = sliderItems.get(position).getImage();
+                    title = sliderItems.get(position).getTitle();
+                    flag = "1";
+                    bookmarkNews();
+                }
+                else {
+                    holder.bookmark.setLiked(false);
+                    Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -141,7 +162,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
                 id = sliderItems.get(position).getId();
                 email = preferences.getString("UserEmail","");
-                url = "http/dkjhssjhfsd";
+                url = sliderItems.get(position).getNewsUrls().get(0);
                 image = sliderItems.get(position).getImage();
                 title = sliderItems.get(position).getTitle();
                 flag="2";
@@ -166,11 +187,11 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         holder.shareView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                 intent.putExtra(Intent.EXTRA_TEXT, sliderItems.get(holder.getAdapterPosition()).getTitle() + " (@ Krazyfox.in ) \n" + sliderItems.get(holder.getAdapterPosition()).getNews_link());
                 intent.setType("text/plain");
-                c.startActivity(Intent.createChooser(intent, "Send To"));
+                c.getApplicationContext().startActivity(Intent.createChooser(intent, "Send To"));
             }
         });
     }
@@ -182,7 +203,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     class SliderViewHolder extends RecyclerView.ViewHolder{
 
         //private CardView cardView;
-        private ImageView imageView, shareView;
+        private ImageView imageView, shareView, newsView;
         private TextView textView,titleView,news_byView,newsTimeView;
         private View shimmer;
         private LikeButton bookmark, likeButton;
@@ -201,6 +222,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             bookmark = itemView.findViewById(R.id.bookmark);
             likeButton = itemView.findViewById(R.id.like_button);
             poll = itemView.findViewById(R.id.poll);
+            newsView = itemView.findViewById(R.id.news);
         }
 
         void setImageView(SliderItem sliderItem){
@@ -316,7 +338,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimationFade;
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         pollFlag = false;
-
+        id = sliderItems.get(position).getId();
         submit = myDialog.findViewById(R.id.submit);
 
         pollQuestion = myDialog.findViewById(R.id.pollQuestion);
@@ -325,6 +347,10 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         first = myDialog.findViewById(R.id.first);
         second = myDialog.findViewById(R.id.second);
         third = myDialog.findViewById(R.id.third);
+
+        first.setBackgroundResource(R.drawable.poll_stroke);
+        second.setBackgroundResource(R.drawable.poll_stroke);
+        third.setBackgroundResource(R.drawable.poll_stroke);
 
         firstOption = myDialog.findViewById(R.id.firstOption);
         secondOption = myDialog.findViewById(R.id.secondOption);
@@ -351,19 +377,19 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     no = ((100*no)/(yes+no+maybe));
                     maybe = ((100*maybe)/(yes+no+maybe));
 
-                    firstClickColour.getBackground().setLevel(yes);
-                    yes=100*100;
                     firstOptionPercentage.setText(Integer.toString(yes)+"%");
+                    yes=yes*100;
+                    firstClickColour.getBackground().setLevel(yes);
                     firstOptionPercentage.setVisibility(View.VISIBLE);
 
-                    secondClickColour.getBackground().setLevel(no);
-                    no=100*100;
                     secondOptionPercentage.setText(Integer.toString(no)+"%");
+                    no=no*100;
+                    secondClickColour.getBackground().setLevel(no);
                     secondOptionPercentage.setVisibility(View.VISIBLE);
 
-                    thirdClickColour.getBackground().setLevel(maybe);
-                    maybe=100*100;
                     thirdOptionPercentage.setText(Integer.toString(maybe)+"%");
+                    maybe=maybe*100;
+                    thirdClickColour.getBackground().setLevel(maybe);
                     thirdOptionPercentage.setVisibility(View.VISIBLE);
 
                     flagPoll = "1";
@@ -377,8 +403,8 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 if(!pollFlag){
                     pollFlag = true;
                     second.setBackgroundResource(R.drawable.poll_selected_stroke);
-                    GradientDrawable drawable = (GradientDrawable)second.getBackground();
-                    drawable.setStroke(10, 0xFFFD676C);
+//                    GradientDrawable drawable = (GradientDrawable)second.getBackground();
+//                    drawable.setStroke(10, 0xFFFD676C);
 
                     int yes = Integer.parseInt(sliderItems.get(position).getYes());
                     int no = Integer.parseInt(sliderItems.get(position).getNo())+1;
@@ -387,19 +413,19 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     no = ((100*no)/(yes+no+maybe));
                     maybe = ((100*maybe)/(yes+no+maybe));
 
-                    firstClickColour.getBackground().setLevel(yes);
-                    yes=100*100;
                     firstOptionPercentage.setText(Integer.toString(yes)+"%");
+                    yes=yes*100;
+                    firstClickColour.getBackground().setLevel(yes);
                     firstOptionPercentage.setVisibility(View.VISIBLE);
 
-                    secondClickColour.getBackground().setLevel(no);
-                    no=100*100;
                     secondOptionPercentage.setText(Integer.toString(no)+"%");
+                    no=no*100;
+                    secondClickColour.getBackground().setLevel(no);
                     secondOptionPercentage.setVisibility(View.VISIBLE);
 
-                    thirdClickColour.getBackground().setLevel(maybe);
-                    maybe=100*100;
                     thirdOptionPercentage.setText(Integer.toString(maybe)+"%");
+                    maybe=maybe*100;
+                    thirdClickColour.getBackground().setLevel(maybe);
                     thirdOptionPercentage.setVisibility(View.VISIBLE);
 
                     flagPoll = "2";
@@ -412,26 +438,29 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             public void onClick(View v) {
                 if(!pollFlag){
                     pollFlag = true;
+                    third.setBackgroundResource(R.drawable.poll_selected_stroke);
+//                    GradientDrawable drawable = (GradientDrawable)second.getBackground();
+//                    drawable.setStroke(10, 0xFFFD676C);
+
                     int yes = Integer.parseInt(sliderItems.get(position).getYes());
                     int no = Integer.parseInt(sliderItems.get(position).getNo());
                     int maybe = Integer.parseInt(sliderItems.get(position).getMaybe())+1;
                     yes = ((100*yes)/(yes+no+maybe));
                     no = ((100*no)/(yes+no+maybe));
                     maybe = ((100*maybe)/(yes+no+maybe));
-
-                    firstClickColour.getBackground().setLevel(yes);
-                    yes=100*100;
                     firstOptionPercentage.setText(Integer.toString(yes)+"%");
+                    yes=yes*100;
+                    firstClickColour.getBackground().setLevel(yes);
                     firstOptionPercentage.setVisibility(View.VISIBLE);
 
-                    secondClickColour.getBackground().setLevel(no);
-                    no=100*100;
                     secondOptionPercentage.setText(Integer.toString(no)+"%");
+                    no=no*100;
+                    secondClickColour.getBackground().setLevel(no);
                     secondOptionPercentage.setVisibility(View.VISIBLE);
 
-                    thirdClickColour.getBackground().setLevel(maybe);
-                    maybe=100*100;
                     thirdOptionPercentage.setText(Integer.toString(maybe)+"%");
+                    maybe=maybe*100;
+                    thirdClickColour.getBackground().setLevel(maybe);
                     thirdOptionPercentage.setVisibility(View.VISIBLE);
 
                     flagPoll = "3";
@@ -484,6 +513,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("id",id);
+                Log.d("pollID", "ID: "+id.toString());
                 params.put("flag",flagPoll);
                 return params;
             }
@@ -491,5 +521,35 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
         RequestQueue requestQueue = Volley.newRequestQueue(c);
         requestQueue.add(stringRequest);
+    }
+
+    public void ShowNewsPopUp(){
+
+        myDialog = new Dialog(popContext);
+        myDialog.setContentView(R.layout.activity_news_pop_up);
+        myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimationFade;
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Window window = myDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.START;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(c.getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView recyclerView = myDialog.findViewById(R.id.newsLinkRecycler);
+        recyclerView.setLayoutManager(layoutManager);
+        NewsImagesAdapter adapter= new NewsImagesAdapter(c.getApplicationContext(),newsImages,newsUrls);
+        recyclerView.setAdapter(adapter);
+        myDialog.show();
+    }
+
+    public boolean isLoggedin()
+    {
+        preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
+        String loggedIn = preferences.getString("Login","");
+        if(loggedIn.equals("YES"))
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

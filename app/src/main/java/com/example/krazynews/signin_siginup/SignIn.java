@@ -1,8 +1,14 @@
 package com.example.krazynews.signin_siginup;
 
 import android.app.ActivityOptions;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -54,7 +60,7 @@ public class SignIn extends AppCompatActivity {
     private LinearLayout longText;
     private ProgressBar progressBar;
     private ImageView logo;
-    private String URL_LOGIN = "https://krazynews.000webhostapp.com/app/login.php";
+    private String URL_LOGIN = "https://www.krazyfox.in/krazynews/app/login.php";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +87,10 @@ public class SignIn extends AppCompatActivity {
                 if(checkDetails()){
                     signIn.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
-                    login();
+                    if(checkConnection())
+                    {
+                        login();
+                    }
                 }
             }
         });
@@ -198,6 +207,42 @@ public class SignIn extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    public boolean checkConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        final Dialog networkDialog = new Dialog(this);
+        networkDialog.setContentView(R.layout.network_dialog);
+        networkDialog.setCanceledOnTouchOutside(false);
+        networkDialog.setCancelable(false);
+//        networkDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        networkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        networkDialog.getWindow().getAttributes().windowAnimations =
+                android.R.style.Animation_Dialog;
+
+        Button btnTryAgain = networkDialog.findViewById(R.id.try_again);
+
+        if(networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()){
+
+
+            btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    networkDialog.hide();
+                    if(checkConnection())
+                    {
+                        login();
+                    }
+                }
+            });
+            networkDialog.show();
+            return false;
+        }else{
+            networkDialog.hide();
+            return true;
+        }
     }
 
     @Override

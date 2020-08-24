@@ -1,6 +1,7 @@
 package com.example.krazynews.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.krazynews.NewsLink;
 import com.example.krazynews.R;
 import com.example.krazynews.signin_siginup.BookmarkItem;
 
@@ -64,18 +66,41 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.set_title(arrayList.get(position));
         holder.set_image(arrayList.get(position));
+        holder.title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context.getApplicationContext(), NewsLink.class);
+                intent.putExtra("newsUrl",arrayList.get(position).getNewsLink());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                context.getApplicationContext().startActivity(intent);
+            }
+        });
+        holder.newsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context.getApplicationContext(), NewsLink.class);
+                intent.putExtra("newsUrl",arrayList.get(position).getNewsLink());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                context.getApplicationContext().startActivity(intent);
+            }
+        });
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                id = arrayList.get(position).getId();
+                BookmarkItem item = arrayList.get(position);
+                int pos = arrayList.indexOf(item);
+
+                id = arrayList.get(pos).getId();
                 preferences = context.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
                 email = preferences.getString("UserEmail", "");
-                url = arrayList.get(position).getNewsLink();
-                image = arrayList.get(position).getImage();
-                title = arrayList.get(position).getTitle();
+                url = arrayList.get(pos).getNewsLink();
+                image = arrayList.get(pos).getImage();
+                title = arrayList.get(pos).getTitle();
+
+                bookmarkDelete();
                 if(bookmarkDelete()) {
-                    arrayList.remove(position);
-                    notifyItemRemoved(position);
+                    arrayList.remove(pos);
+                    notifyItemRemoved(pos);
                 }
             }
         });

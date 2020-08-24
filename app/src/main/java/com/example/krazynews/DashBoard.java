@@ -88,10 +88,19 @@ public class DashBoard extends Activity {
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =  new Intent(DashBoard.this,Bookmark.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
-                finish();
+
+                if(isLoggedin())
+                {
+                    Intent intent =  new Intent(DashBoard.this,Bookmark.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
+                    finish();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 //
@@ -405,6 +414,17 @@ public class DashBoard extends Activity {
         }
     }
 
+    public boolean isLoggedin()
+    {
+        String loggedIn = preferences.getString("Login","");
+        if(loggedIn.equals("YES"))
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     @Override
     public void onBackPressed() {
         editor.putString("allNews","false");

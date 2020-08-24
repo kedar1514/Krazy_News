@@ -3,7 +3,13 @@ package com.example.krazynews.signin_siginup;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -19,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -42,17 +49,17 @@ public class GetEmail extends AppCompatActivity {
     private ProgressBar progressBar;
     private ImageView main_image;
     private boolean flag , otp_correct;
+    private boolean otpSentResult,emailExistVal;
     private String OTP;
     private String name, city, user_email;
-    private String URL_OTP = "https://krazynews.000webhostapp.com/app/otp.php";
-    private String URL_OTP_VALIDATE = "https://krazynews.000webhostapp.com/app/otp_validate.php";
-    private String URL_EMAIL_CHECK = "https://krazynews.000webhostapp.com/app/emailCheck.php";
-    private String URL_REGISTER = "https://krazynews.000webhostapp.com/app/index.php";
+    private String URL_OTP = "https://www.krazyfox.in/krazynews/app/otp.php";
+    private String URL_OTP_VALIDATE = "https://www.krazyfox.in/krazynews/app/otp_validate.php";
+    private String URL_EMAIL_CHECK = "https://www.krazyfox.in/krazynews/app/emailCheck.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.get_email);
-        // Taking city and name valur from previous activity
+        // Taking city and name value from previous activity
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         city = intent.getStringExtra("city");
@@ -72,108 +79,26 @@ public class GetEmail extends AppCompatActivity {
 
         send_code.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
-        flag = false;
+        otpSentResult = false;
+        emailExistVal = false;
         send_code.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(!flag)
-                {
-                    if(get_email.getText().toString().trim().isEmpty())
-                    {
-                        empty_email.setText("Please enter email");
-                    }
-                    else if(!Patterns.EMAIL_ADDRESS.matcher(get_email.getText().toString().trim()).matches()){
-                        empty_email.setText("Please enter valid Email");
-                    }
-                    else
-                    {
-                        user_email = get_email.getText().toString().trim();
-                        send_code.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.VISIBLE);
-                        emailExist(get_email.getText().toString().trim());
-                    }
-                }
-                else{
-                    send_code.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    validateOTP(get_email.getText().toString().trim());
-                }
+                emailPassTry();
             }
         });
     }
 
-    public void validateOTP(final String OTP_VAL){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_OTP_VALIDATE,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String success = jsonObject.getString("success").toString();
 
-                            if(success.equals("1")){
-                                Pair[] pairs = new Pair[2];
-                                pairs[0] = new Pair<View, String>(bold_text,"bold");
-                                pairs[1] = new Pair<View, String>(long_text,"long_text");
-
-                                send_code.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(GetEmail.this, "Verified Succesfully", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(GetEmail.this, GetPassword.class);
-                                intent.putExtra("name", name);
-                                intent.putExtra("city", city);
-                                intent.putExtra("email", user_email);
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(GetEmail.this,pairs);
-                                    startActivity(intent,options.toBundle());
-                                    finish();
-                                }
-                                else
-                                {
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-                            else{
-                                send_code.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                                empty_email.setText("Invalid Otp");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            send_code.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(GetEmail.this, "Verification Error", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                })
-        {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("otp",OTP_VAL);
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
 
     public void sendOtp(final String email){
-
+        final boolean tempFlag = true;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_OTP,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-//                            Log.i("tagconvertstr", "["+response+"]");
+                            Log.i("sendOtp", "["+response+"]");
                             JSONObject jsonObject = new JSONObject(response);
                             String success = jsonObject.getString("success").toString();
                             //Toast.makeText(GetEmail.this, "Register Success!", Toast.LENGTH_LONG).show();
@@ -181,23 +106,32 @@ public class GetEmail extends AppCompatActivity {
                                 send_code.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Mail Error!", Toast.LENGTH_LONG).show();
+                                otpSentResult=false;
                             }
                             else if(success.equals("1")){
                                 send_code.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Otp Sent", Toast.LENGTH_LONG).show();
-                                OTP = jsonObject.getString("message").toString();
+                                Intent i = new Intent(GetEmail.this, VerifyOtp.class);
+                                i.putExtra("name",name);
+                                i.putExtra("city",city);
+                                i.putExtra("email",email);
+                                startActivity(i);
+                                finish();
                             }
                             else{
                                 send_code.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(GetEmail.this, "Otp sent Failure", Toast.LENGTH_LONG).show();
+                                otpSentResult = false;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                             send_code.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
-                            Toast.makeText(GetEmail.this, "Register Error!" + e.toString(), Toast.LENGTH_LONG).show();
+//                            Log.d("sendOtp", "onResponse: "+ e.toString());
+                            Toast.makeText(GetEmail.this, "JsonException Error!" + e.toString(), Toast.LENGTH_LONG).show();
+                            otpSentResult = false;
                         }
 
                     }
@@ -205,23 +139,34 @@ public class GetEmail extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        error.printStackTrace();
+                        Log.d("jsonError",error.toString());
+                        Toast.makeText(GetEmail.this, "Otp Error!" + error.toString(), Toast.LENGTH_LONG).show();
+                        send_code.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        otpSentResult = false;
                     }
                 })
         {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+//                Log.d("emailValue", email.toString());
                 params.put("email",email);
+                Log.d("emailValue", params.toString());
                 return params;
             }
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(stringRequest);
     }
 
     public void emailExist(final String email){
+        final boolean tempFlag=true;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_EMAIL_CHECK,
                 new Response.Listener<String>() {
                     @Override
@@ -236,30 +181,28 @@ public class GetEmail extends AppCompatActivity {
                                 send_code.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 empty_email.setText("Email already registered");
+                                emailExistVal = tempFlag;
                             }
                             else
                             {
-                                user_email = get_email.getText().toString().trim();
-                                text_view1.setText("We just sent you ");
-                                text_view2.setText("Code");
-                                text_view3.setText(" !");
-                                send_code.setText("Next");
-                                get_email.setText("");
-                                empty_email.setText("");
-                                get_email.setHint("Enter Code");
-                                flag = true;
                                 sendOtp(email);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(GetEmail.this, "Register Error!" + e.toString(), Toast.LENGTH_LONG).show();
+//                            Log.d("emailExist", e.toString());
+                            Toast.makeText(GetEmail.this, "Json Error!" + e.toString(), Toast.LENGTH_LONG).show();
+                            send_code.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+//                        Log.d("jsonError", error.toString());
                         Toast.makeText(GetEmail.this, "Register Error!" + error.toString(), Toast.LENGTH_LONG).show();
+                        send_code.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
                     }
                 })
         {
@@ -275,16 +218,61 @@ public class GetEmail extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    public boolean checkConnection(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    @Override
-    public void onBackPressed() {
-        text_view1.setText("Tell us your ");
-        text_view2.setText("Email");
-        text_view3.setText(" .");
-        send_code.setText("Next");
-        get_email.setText("");
-        empty_email.setText("");
-        get_email.setHint("Tell us your Email id");
-        flag = false;
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        final Dialog networkDialog = new Dialog(this);
+        networkDialog.setContentView(R.layout.network_dialog);
+        networkDialog.setCanceledOnTouchOutside(false);
+        networkDialog.setCancelable(false);
+//        networkDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        networkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        networkDialog.getWindow().getAttributes().windowAnimations =
+                android.R.style.Animation_Dialog;
+
+        Button btnTryAgain = networkDialog.findViewById(R.id.try_again);
+
+        if(networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()){
+
+
+            btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    networkDialog.hide();
+                    if(checkConnection())
+                    {
+                        emailPassTry();
+                    }
+                }
+            });
+            networkDialog.show();
+            return false;
+        }else{
+            networkDialog.hide();
+            return true;
+        }
+    }
+
+    void emailPassTry()
+    {
+        if(checkConnection())
+        {
+            if(get_email.getText().toString().trim().isEmpty())
+            {
+                empty_email.setText("Please enter email");
+            }
+            else if(!Patterns.EMAIL_ADDRESS.matcher(get_email.getText().toString().trim()).matches()){
+                empty_email.setText("Please enter valid Email");
+            }
+            else
+            {
+                user_email = get_email.getText().toString().trim();
+                send_code.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                empty_email.setText("");
+                emailExist(user_email);
+            }
+        }
     }
 }

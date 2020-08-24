@@ -6,13 +6,20 @@ import android.widget.ImageView;
 
 import com.like.LikeButton;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+
 import androidx.cardview.widget.CardView;
 
 public class SliderItem {
     private String id,image,text,title,news_by,news_time, news_link, pollQuestion,yes,no,maybe;
+    private JSONArray publisherImage;
     private ImageView share;
     private View shimmerLoading;
     private LikeButton bookmark, likeButton;
+    private ArrayList<String> newsImages = new ArrayList<>();
+    private ArrayList<String> newsUrls = new ArrayList<>();
 
     public SliderItem() {}
 
@@ -76,4 +83,10 @@ public class SliderItem {
 
     public String getMaybe() { return maybe; }
     public void setMaybe(String maybe) { this.maybe = maybe; }
+
+    public ArrayList<String> getNewsImages() { return newsImages; }
+    public void setNewsImages(ArrayList<String> newsImages) { this.newsImages = newsImages; }
+
+    public ArrayList<String> getNewsUrls() { return newsUrls; }
+    public void setNewsUrls(ArrayList<String> newsUrls) { this.newsUrls = newsUrls; }
 }
