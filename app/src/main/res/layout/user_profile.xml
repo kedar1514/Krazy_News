@@ -283,6 +283,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="20dp"
                         tools:layout_editor_absoluteX="271dp"
+                        android:checked="true"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -325,7 +326,7 @@
                         android:fontFamily="@font/source_sans_pro" />
 
                     <Switch
-                        android:id="@+id/hd_image"
+                        android:id="@+id/switch_hd_image"
                         android:track="@drawable/track_selector"
                         android:thumb="@drawable/thumb_selector_hd_image"
                         android:layout_width="wrap_content"

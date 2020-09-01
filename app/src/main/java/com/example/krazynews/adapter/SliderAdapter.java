@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -98,102 +99,116 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     public void onBindViewHolder(@NonNull final SliderViewHolder holder, final int position) {
 
         id = sliderItems.get(position).getId();
-
-        holder.setImageView(sliderItems.get(position));
-        holder.setTextView(sliderItems.get(position));
-        holder.setTitleView(sliderItems.get(position));
-        holder.setNews_byView(sliderItems.get(position));
-        holder.setNewsTimeView(sliderItems.get(position));
-        holder.likeButton.setLiked(false);
-        if(sliderItems.get(position).getPollQuestion().equals(""))
+        if(sliderItems.get(position).getIsAdd().equals("1"))
         {
-            holder.poll.setVisibility(View.GONE);
-        }
-        else
-        {
-            holder.poll.setVisibility(View.VISIBLE);
-            holder.poll.setOnClickListener(new View.OnClickListener() {
+            holder.setAdd(sliderItems.get(position));
+            holder.addImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ShowPoll(holder, position);
+                    Intent intent = new Intent(c.getApplicationContext(), NewsLink.class);
+                    intent.putExtra("newsUrl",sliderItems.get(position).getAddUrl());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    c.getApplicationContext().startActivity(intent);
                 }
             });
-        }
-
-        if(sliderItems.size()-1 == position) {
-            holder.shimmer.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.shimmer.setVisibility(View.GONE);
-        }
-
-        holder.newsView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newsImages = sliderItems.get(position).getNewsImages();
-                newsUrls = sliderItems.get(position).getNewsUrls();
-                ShowNewsPopUp();
+        }else{
+            holder.setNews();
+            holder.setImageView(sliderItems.get(position));
+            holder.setTextView(sliderItems.get(position));
+            holder.setTitleView(sliderItems.get(position));
+            holder.setNews_byView(sliderItems.get(position));
+            holder.setNewsTimeView(sliderItems.get(position));
+            holder.likeButton.setLiked(false);
+            if(sliderItems.get(position).getPollQuestion().equals(""))
+            {
+                holder.poll.setVisibility(View.GONE);
             }
-        });
+            else
+            {
+                holder.poll.setVisibility(View.VISIBLE);
+                holder.poll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ShowPoll(holder, position);
+                    }
+                });
+            }
 
-        holder.bookmark.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton bookmark) {
+            if(sliderItems.size()-1 == position) {
+                holder.shimmer.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.shimmer.setVisibility(View.GONE);
+            }
 
-                if(isLoggedin())
-                {
+            holder.newsView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    newsImages = sliderItems.get(position).getNewsImages();
+                    newsUrls = sliderItems.get(position).getNewsUrls();
+                    ShowNewsPopUp();
+                }
+            });
+
+            holder.bookmark.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton bookmark) {
+
+                    if(isLoggedin())
+                    {
+                        preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
+                        id = sliderItems.get(position).getId();
+                        email = preferences.getString("UserEmail","");
+                        url = sliderItems.get(position).getNewsUrls().get(0);
+                        image = sliderItems.get(position).getImage();
+                        title = sliderItems.get(position).getTitle();
+                        flag = "1";
+                        bookmarkNews();
+                    }
+                    else {
+                        holder.bookmark.setLiked(false);
+                        Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void unLiked(LikeButton bookmark) {
                     preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
                     id = sliderItems.get(position).getId();
                     email = preferences.getString("UserEmail","");
                     url = sliderItems.get(position).getNewsUrls().get(0);
                     image = sliderItems.get(position).getImage();
                     title = sliderItems.get(position).getTitle();
-                    flag = "1";
+                    flag="2";
                     bookmarkNews();
                 }
-                else {
-                    holder.bookmark.setLiked(false);
-                    Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+            });
+
+            holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    String id = sliderItems.get(position).getId();
+                    like(id,"1");
                 }
-            }
 
-            @Override
-            public void unLiked(LikeButton bookmark) {
-                preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
-                id = sliderItems.get(position).getId();
-                email = preferences.getString("UserEmail","");
-                url = sliderItems.get(position).getNewsUrls().get(0);
-                image = sliderItems.get(position).getImage();
-                title = sliderItems.get(position).getTitle();
-                flag="2";
-                bookmarkNews();
-            }
-        });
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    String id = sliderItems.get(position).getId();
+                    like(id,"2");
+                }
+            });
 
-        holder.likeButton.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-                String id = sliderItems.get(position).getId();
-                like(id,"1");
-            }
-
-            @Override
-            public void unLiked(LikeButton likeButton) {
-                String id = sliderItems.get(position).getId();
-                like(id,"2");
-            }
-        });
-
-        holder.shareView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                intent.putExtra(Intent.EXTRA_TEXT, sliderItems.get(holder.getAdapterPosition()).getTitle() + " (@ Krazyfox.in ) \n" + sliderItems.get(holder.getAdapterPosition()).getNews_link());
-                intent.setType("text/plain");
-                c.getApplicationContext().startActivity(Intent.createChooser(intent, "Send To"));
-            }
-        });
+            holder.shareView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    intent.putExtra(Intent.EXTRA_TEXT, sliderItems.get(position).getTitle() + " (@ Krazyfox.in ) \n" + sliderItems.get(holder.getAdapterPosition()).getNews_link());
+                    intent.setType("text/plain");
+                    c.startActivity(Intent.createChooser(intent, "Send To"));
+                }
+            });
+        }
     }
     @Override
     public int getItemCount() {
@@ -203,11 +218,13 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     class SliderViewHolder extends RecyclerView.ViewHolder{
 
         //private CardView cardView;
-        private ImageView imageView, shareView, newsView;
+        private ImageView imageView, shareView, newsView, addImage;
         private TextView textView,titleView,news_byView,newsTimeView;
         private View shimmer;
         private LikeButton bookmark, likeButton;
         private ConstraintLayout poll;
+        private CardView addContainer;
+        private LinearLayout newsContainer;
 
         SliderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -223,8 +240,22 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             likeButton = itemView.findViewById(R.id.like_button);
             poll = itemView.findViewById(R.id.poll);
             newsView = itemView.findViewById(R.id.news);
+            //add options
+            addContainer = itemView.findViewById(R.id.add_container);
+            newsContainer = itemView.findViewById(R.id.news_container);
+            addImage = itemView.findViewById(R.id.add_image);
         }
 
+        void setAdd(SliderItem sliderItem){
+            addContainer.setVisibility(View.VISIBLE);
+            newsContainer.setVisibility(View.GONE);
+            Glide.with(c).load(sliderItem.getAddImage()).into(addImage);
+        }
+
+        void setNews(){
+            addContainer.setVisibility(View.GONE);
+            newsContainer.setVisibility(View.VISIBLE);
+        }
         void setImageView(SliderItem sliderItem){
             Glide.with(c).load(sliderItem.getImage()).into(imageView);
         }

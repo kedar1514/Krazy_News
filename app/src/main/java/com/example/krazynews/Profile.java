@@ -14,9 +14,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
     private TextView userName, userEmail, userCity;
     private Spinner languageSpinner;
     private ArrayList<String> languageList;
+    private Switch notificationSwitch, hdImagesSwitch;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,8 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
         userEmail = findViewById(R.id.user_email);
         userCity = findViewById(R.id.user_city);
         languageSpinner = findViewById(R.id.language_spinner);
+        notificationSwitch = findViewById(R.id.switch_notification);
+        hdImagesSwitch = findViewById(R.id.switch_hd_image);
 
         preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
         String loggedIn = preferences.getString("Login","");
@@ -174,6 +179,34 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 finish();
+            }
+        });
+        if(preferences.getString("Notifications","").equals("DontShow") || preferences.getString("Notifications","").equals("Show")) {
+            if (preferences.getString("Notifications", "").equals("DontShow")) {
+                notificationSwitch.setChecked(false);
+            } else if (preferences.getString("Notifications", "").equals("Show")) {
+                notificationSwitch.setChecked(true);
+            }
+        }
+        else{
+            editor = preferences.edit();
+            editor.putString("Notifications","Show");
+            editor.apply();
+            notificationSwitch.setChecked(true);
+        }
+
+        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    editor = preferences.edit();
+                    editor.putString("Notifications","Show");
+                    editor.apply();
+                } else {
+                    editor = preferences.edit();
+                    editor.putString("Notifications","DontShow");
+                    editor.apply();
+                }
             }
         });
     }

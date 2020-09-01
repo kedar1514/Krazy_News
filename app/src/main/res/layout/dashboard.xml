@@ -56,12 +56,15 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/text">
+        android:layout_height="match_parent"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="100dp"
+        android:background="@color/colorPrimary">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/text"
             android:orientation="vertical">
 
             <TextView
@@ -245,71 +248,536 @@
                 </LinearLayout>
             </GridLayout>
 
-            <TextView
-                android:id="@+id/poll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="30dp"
-                android:fontFamily="@font/source_sans_pro"
-                android:text="Live Polls"
-                android:textColor="#101010"
-                android:textSize="18sp" />
-
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/colorPrimary"
+                android:layout_height="wrap_content"
+                android:id="@+id/main_card"
+                android:background="#FFFFFF"
+                app:cardUseCompatPadding="true"
                 android:elevation="10dp"
-                android:outlineSpotShadowColor="@color/colorPrimary"
-                app:cardCornerRadius="7dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                app:cardCornerRadius="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                >
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/colorPrimary">
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:src="@drawable/fingerprinticon"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:padding="25dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/clanprobold"
+                            android:text="Covid-19 Updates"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="25sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/covid_count_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:id="@+id/covid_counts_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
+                        android:visibility="visible"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical">
                         <TextView
+                            android:layout_gravity="center_horizontal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
-                            android:fontFamily="@font/open_sans_extrabold_italic"
-                            android:text="poll"
-                            android:textColor="#FFFFFF"
-                            android:textSize="45sp"
-                            android:textStyle="bold|italic" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                            android:text="World"
+                            android:fontFamily="@font/clanproregular"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimary"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/open_sans_semibold"
-                            android:text="Vote on current topics!"
-                            android:textColor="#FFFFFF"
-                            android:textSize="17sp" />
+                            android:orientation="vertical">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/first_row_world"
+                                android:layout_width="match_parent"
+                                android:layout_height="180dp"
+                                android:layout_marginTop="10dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/world_confirmed_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/world_active_card"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="CONFIRMED"
+                                            android:textAlignment="center"
+                                            android:textColor="#FF0000"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_total_confirm_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#FF0000"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_daily_confirm_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#FF2929"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/world_active_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toEndOf="@+id/world_confirmed_card"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="30dp"
+                                            android:text="ACTIVE"
+                                            android:textAlignment="center"
+                                            android:textColor="#0059FF"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_total_active_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0059FF"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/second_row_world"
+                                android:layout_width="match_parent"
+                                android:layout_height="180dp"
+                                android:layout_below="@id/first_row_world"
+                                android:layout_marginTop="10dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/world_recoverd_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/world_death_card"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="RECOVERED"
+                                            android:textAlignment="center"
+                                            android:textColor="#0B9C06"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_total_recover_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0B9C06"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_daily_recover_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0EB808"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/world_death_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toEndOf="@+id/world_recoverd_card"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="DEATH"
+                                            android:textAlignment="center"
+                                            android:textColor="#2A2A2C"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_total_death_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#2A2A2C"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/world_daily_death_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#666668"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="200dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical"
+                            android:paddingLeft="5dp"
+                            android:background="@drawable/news_pop_up_background">
+                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                android:id="@+id/country_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:elevation="10dp"
+                                android:contextClickable="true"
+                                android:transitionName="edit_text"
+                                android:textAlignment="center"
+                                android:outlineSpotShadowColor="@color/colorPrimary"
+                                android:popupBackground="@drawable/news_pop_up_background"
+                                />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/first_row_country"
+                                android:layout_width="match_parent"
+                                android:layout_height="180dp"
+                                android:layout_marginTop="10dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/country_confirm_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/country_active_card"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="CONFIRMED"
+                                            android:textAlignment="center"
+                                            android:textColor="#FF0000"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_total_confirm_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#FF0000"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_daily_confirm_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#FF2929"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/country_active_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toEndOf="@+id/country_confirm_card"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="30dp"
+                                            android:text="ACTIVE"
+                                            android:textAlignment="center"
+                                            android:textColor="#0059FF"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_total_active_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0059FF"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/second_row_country"
+                                android:layout_width="match_parent"
+                                android:layout_height="180dp"
+                                android:layout_below="@id/first_row_country"
+                                android:layout_marginTop="10dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/country_recover_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/country_death_card"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="RECOVERED"
+                                            android:textAlignment="center"
+                                            android:textColor="#0B9C06"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_total_recover_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0B9C06"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_daily_recover_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#0EB808"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/country_death_card"
+                                    android:layout_width="150dp"
+                                    android:layout_height="150dp"
+                                    app:cardCornerRadius="10dp"
+                                    app:cardElevation="5dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:layout_constraintStart_toEndOf="@+id/country_recover_card"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="20dp"
+                                            android:text="DEATH"
+                                            android:textAlignment="center"
+                                            android:textColor="#2A2A2C"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_total_death_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="15dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#2A2A2C"
+                                            android:textSize="22sp"
+                                            android:textStyle="bold"
+                                            android:gravity="center_horizontal" />
+
+                                        <TextView
+                                            android:id="@+id/country_daily_death_cases"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="10dp"
+                                            android:text="..."
+                                            android:textAlignment="center"
+                                            android:textColor="#666668"
+                                            android:textSize="16sp"
+                                            android:gravity="center_horizontal" />
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
                     </LinearLayout>
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -322,6 +790,7 @@
                 android:text="Choose Topic"
                 android:textColor="#101010"
                 android:textSize="18sp" />
+
             <GridLayout
                 android:id="@+id/gridLayout2"
                 android:layout_width="match_parent"

@@ -1,26 +1,45 @@
 package com.example.krazynews;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.krazynews.signin_siginup.CityInput;
+import com.example.krazynews.signin_siginup.SignIn;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +51,20 @@ public class DashBoard extends Activity {
     private SharedPreferences.Editor editor;
     private  SharedPreferences preferences;
     private String userEmail;
+    // covid status
+    private TextView worldDailyConfirmCases, worldTotalConfirmCases, worldTotalActiveCases, worldDailyRecoverCases, worldTotalRecoverCases;
+    private TextView worldDailyDeathCases, worldTotalDeathCases;
+    private TextView countryDailyConfirmCases, countryTotalConfirmCases, countryTotalActiveCases, countryDailyRecoverCases, countryTotalRecoverCases;
+    private TextView countryDailyDeathCases, countryTotalDeathCases;
+    private Button covidCountButton;
+    private LinearLayout covidCountLayout;
+    private boolean covidCountVisibilty;
+    private Spinner spinner;
+    private ArrayList<String> countryList;
+    private ArrayList<CountryCovidData> countryCovidDataList;
+    private String URL_WORLD_COVID = "https://corona.lmao.ninja/v3/covid-19/all";
+    private String URL_COUNTRY_COVID = "https://corona.lmao.ninja/v3/covid-19/countries";
+    //covid status
     private LinearLayout linearLayout1, linearLayout2, linearLayout3, linearLayout4, linearLayout5, linearLayout6, linearLayout7, linearLayout8, linearLayout9;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +77,91 @@ public class DashBoard extends Activity {
         trending = findViewById(R.id.trending);
         bookmark = findViewById(R.id.bookmark);
         unread = findViewById(R.id.unread);
+
+        worldDailyConfirmCases = findViewById(R.id.world_daily_confirm_cases);
+        worldTotalConfirmCases = findViewById(R.id.world_total_confirm_cases);
+        worldTotalActiveCases = findViewById(R.id.world_total_active_cases);
+        worldDailyRecoverCases = findViewById(R.id.world_daily_recover_cases);
+        worldTotalRecoverCases = findViewById(R.id.world_total_recover_cases);
+        worldDailyDeathCases = findViewById(R.id.world_daily_death_cases);
+        worldTotalDeathCases = findViewById(R.id.world_total_death_cases);
+
+        countryDailyConfirmCases = findViewById(R.id.country_daily_confirm_cases);
+        countryTotalConfirmCases = findViewById(R.id.country_total_confirm_cases);
+        countryTotalActiveCases = findViewById(R.id.country_total_active_cases);
+        countryDailyRecoverCases = findViewById(R.id.country_daily_recover_cases);
+        countryTotalRecoverCases = findViewById(R.id.country_total_recover_cases);
+        countryDailyDeathCases = findViewById(R.id.country_daily_death_cases);
+        countryTotalDeathCases = findViewById(R.id.country_total_death_cases);
+
+        covidCountButton = findViewById(R.id.covid_count_button);
+        covidCountLayout = findViewById(R.id.covid_counts_layout);
+        covidCountLayout.setVisibility(View.GONE);
+        covidCountVisibilty = true;
+        spinner = findViewById(R.id.country_spinner);
+        countryList = new ArrayList<>();
+        countryList.add("India");
+        countryCovidDataList = new ArrayList<>();
+        getCovidData();
+
+        spinner.setAdapter(new ArrayAdapter<>(DashBoard.this,
+                android.R.layout.simple_spinner_dropdown_item,countryList));
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position==0)
+                {
+                    countryTotalConfirmCases.setText(countryCovidDataList.get(93).getCases());
+                    countryDailyConfirmCases.setText("+"+countryCovidDataList.get(93).getTodayCases());
+
+                    countryTotalRecoverCases.setText(countryCovidDataList.get(93).getRecovered());
+                    countryDailyRecoverCases.setText("+"+countryCovidDataList.get(93).getTodayRecovered());
+
+                    countryTotalDeathCases.setText(countryCovidDataList.get(93).getDeaths());
+                    countryDailyDeathCases.setText("+"+countryCovidDataList.get(93).getTodayDeaths());
+
+                    countryTotalActiveCases.setText(countryCovidDataList.get(93).getActive());
+                }
+                else{
+                    countryTotalConfirmCases.setText(countryCovidDataList.get(position-1).getCases());
+                    countryDailyConfirmCases.setText("+"+countryCovidDataList.get(position-1).getTodayCases());
+
+                    countryTotalRecoverCases.setText(countryCovidDataList.get(position-1).getRecovered());
+                    countryDailyRecoverCases.setText("+"+countryCovidDataList.get(position-1).getTodayRecovered());
+
+                    countryTotalDeathCases.setText(countryCovidDataList.get(position-1).getDeaths());
+                    countryDailyDeathCases.setText("+"+countryCovidDataList.get(position-1).getTodayDeaths());
+
+                    countryTotalActiveCases.setText(countryCovidDataList.get(position-1).getActive());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        covidCountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(networkState())
+                {
+                    if(covidCountVisibilty) {
+//                        covidCountLayout.animate().alpha(0.0f).setDuration(2000);
+                        covidCountLayout.setVisibility(View.VISIBLE);
+                        covidCountVisibilty = false;
+                        covidCountButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
+                    }else{
+//                        covidCountLayout.animate().alpha(0.0f).setDuration(2000);
+                        covidCountLayout.setVisibility(View.GONE);
+                        covidCountVisibilty = true;
+                        covidCountButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
+                    }
+                }
+            }
+        });
 
         all_news.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -348,6 +466,83 @@ public class DashBoard extends Activity {
 //        });
     }
 
+    void getCovidData() {
+        JsonObjectRequest jsonObjectRequestWorld = new JsonObjectRequest(Request.Method.GET, URL_WORLD_COVID, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            worldTotalConfirmCases.setText(response.getString("cases"));
+                            worldDailyConfirmCases.setText("+"+response.getString("todayCases"));
+
+                            worldTotalRecoverCases.setText(response.getString("recovered"));
+                            worldDailyRecoverCases.setText("+"+response.getString("todayRecovered"));
+
+                            worldTotalDeathCases.setText(response.getString("deaths"));
+                            worldDailyDeathCases.setText("+"+response.getString("todayDeaths"));
+
+                            worldTotalActiveCases.setText(response.getString("active"));
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(DashBoard.this,  error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+        int socketTimeWorld = 70000;
+        RetryPolicy retryPolicyWorld = new DefaultRetryPolicy(socketTimeWorld,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        jsonObjectRequestWorld.setRetryPolicy(retryPolicyWorld);
+        RequestQueue requestQueueWorld = Volley.newRequestQueue(DashBoard.this);
+        requestQueueWorld.add(jsonObjectRequestWorld);
+
+        JsonArrayRequest jsonArrayRequestCountry = new JsonArrayRequest(Request.Method.GET, URL_COUNTRY_COVID, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        JSONArray jsonArray = response;
+                        for (int i=0;i<jsonArray.length();i++)
+                        {
+                            try {
+                                countryList.add(jsonArray.getJSONObject(i).getString("country"));
+                                CountryCovidData countryCovidData =
+                                        new CountryCovidData(jsonArray.getJSONObject(i).getString("cases"),
+                                                jsonArray.getJSONObject(i).getString("todayCases"),
+                                                jsonArray.getJSONObject(i).getString("deaths"),
+                                                jsonArray.getJSONObject(i).getString("todayDeaths"),
+                                                jsonArray.getJSONObject(i).getString("recovered"),
+                                                jsonArray.getJSONObject(i).getString("todayRecovered"),
+                                                jsonArray.getJSONObject(i).getString("active"));
+                                countryCovidDataList.add(countryCovidData);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(DashBoard.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+        int socketTimeCountry = 70000;
+        RetryPolicy retryPolicyCountry = new DefaultRetryPolicy(socketTimeCountry,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        jsonArrayRequestCountry.setRetryPolicy(retryPolicyCountry);
+        RequestQueue requestQueueCountry = Volley.newRequestQueue(DashBoard.this);
+        requestQueueCountry.add(jsonArrayRequestCountry);
+    }
     public void checkTopic(){
         String corona = preferences.getString("corona","");
         String politics = preferences.getString("politics","");
@@ -423,6 +618,48 @@ public class DashBoard extends Activity {
         }
         else{
             return false;
+        }
+    }
+
+    public boolean networkState() {
+        if(checkConnection()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean checkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        final Dialog networkDialog = new Dialog(this);
+        networkDialog.setContentView(R.layout.network_dialog);
+        networkDialog.setCanceledOnTouchOutside(false);
+        networkDialog.setCancelable(false);
+//        networkDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        networkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        networkDialog.getWindow().getAttributes().windowAnimations =
+                android.R.style.Animation_Dialog;
+
+        Button btnTryAgain = networkDialog.findViewById(R.id.try_again);
+
+        if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) {
+            btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(checkConnection()){
+                        getCovidData();
+                        networkDialog.hide();
+                    }
+                }
+            });
+            networkDialog.show();
+            return false;
+        } else {
+            networkDialog.hide();
+            return true;
         }
     }
     @Override

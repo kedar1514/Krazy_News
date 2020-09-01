@@ -16,6 +16,7 @@ public class SliderItem {
     private String id,image,text,title,news_by,news_time, news_link, pollQuestion,yes,no,maybe;
     private JSONArray publisherImage;
     private ImageView share;
+    private String addImage, addUrl,isAdd,addID,addName,addValue,addStatus;
     private View shimmerLoading;
     private LikeButton bookmark, likeButton;
     private ArrayList<String> newsImages = new ArrayList<>();
@@ -34,6 +35,18 @@ public class SliderItem {
         this.bookmark = bookmark;
         this.likeButton = likeButton;
     }
+
+    public String getAddName() { return addName; }
+    public void setAddName(String addName) { this.addName = addName; }
+
+    public String getAddValue() { return addValue; }
+    public void setAddValue(String addValue) { this.addValue = addValue; }
+
+    public String getAddStatus() { return addStatus; }
+    public void setAddStatus(String addStatus) { this.addStatus = addStatus; }
+
+    public String getAddID() { return addID; }
+    public void setAddID(String addID) { this.addID = addID; }
 
     public String getTitle() {
         return title;
@@ -89,4 +102,13 @@ public class SliderItem {
 
     public ArrayList<String> getNewsUrls() { return newsUrls; }
     public void setNewsUrls(ArrayList<String> newsUrls) { this.newsUrls = newsUrls; }
+
+    public String getAddImage() { return addImage;}
+    public void setAddImage(String addImage) { this.addImage = addImage;}
+
+    public String getAddUrl() { return addUrl;}
+    public void setAddUrl(String addUrl) { this.addUrl = addUrl;}
+
+    public String getIsAdd() { return isAdd; }
+    public void setIsAdd(String isAdd) { this.isAdd = isAdd; }
 }
