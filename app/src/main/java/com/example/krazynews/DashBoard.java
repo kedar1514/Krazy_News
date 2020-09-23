@@ -196,38 +196,65 @@ public class DashBoard extends Activity {
 //            }
 //        });
 //
-//        trending.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//
-        bookmark.setOnClickListener(new View.OnClickListener() {
+        trending.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(isLoggedin())
+                if(checkConnection())
                 {
-                    Intent intent =  new Intent(DashBoard.this,Bookmark.class);
+                    Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
+                    intent.putExtra("url","https://www.krazyfox.in/krazynews/api/");
+                    intent.putExtra("from","trending");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
                     finish();
                 }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
-                }
-
             }
         });
-//
-//        unread.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(checkConnection())
+                {
+                    if(isLoggedin())
+                    {
+                        Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
+                        intent.putExtra("url","https://www.krazyfox.in/krazynews/api/fetchbookmark.php");
+                        intent.putExtra("from","bookmark");
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
+                        finish();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        unread.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkConnection())
+                {
+                    if(isLoggedin())
+                    {
+                        Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
+                        intent.putExtra("url","https://www.krazyfox.in/krazynews/api/");
+                        intent.putExtra("from","unread");
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
+                        finish();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
         ImageView imageView = findViewById(R.id.aero_icon);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -664,13 +691,13 @@ public class DashBoard extends Activity {
     }
     @Override
     public void onBackPressed() {
-        editor.putString("allNews","false");
-        editor.putString("topNews","false");
-        editor.putString("trendingNews","false");
-        editor.apply();
-        Intent intent = new Intent(DashBoard.this,MainActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+//        editor.putString("allNews","false");
+//        editor.putString("topNews","false");
+//        editor.putString("trendingNews","false");
+//        editor.apply();
+//        Intent intent = new Intent(DashBoard.this,MainActivity.class);
+//        startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 }

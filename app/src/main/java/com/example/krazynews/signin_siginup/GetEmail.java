@@ -129,7 +129,7 @@ public class GetEmail extends AppCompatActivity {
                             e.printStackTrace();
                             send_code.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
-//                            Log.d("sendOtp", "onResponse: "+ e.toString());
+                            Log.d("sendOtp", "onResponse: "+ e.toString());
                             Toast.makeText(GetEmail.this, "JsonException Error!" + e.toString(), Toast.LENGTH_LONG).show();
                             otpSentResult = false;
                         }

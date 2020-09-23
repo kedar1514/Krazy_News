@@ -13,27 +13,25 @@ import java.util.ArrayList;
 import androidx.cardview.widget.CardView;
 
 public class SliderItem {
-    private String id,image,text,title,news_by,news_time, news_link, pollQuestion,yes,no,maybe;
+    private String id,image,text,title,news_by,news_time, pollQuestion,yes,no,maybe;
     private JSONArray publisherImage;
     private ImageView share;
+    //add Section
     private String addImage, addUrl,isAdd,addID,addName,addValue,addStatus;
+    private String bookmark, like,view,poll;
     private View shimmerLoading;
-    private LikeButton bookmark, likeButton;
     private ArrayList<String> newsImages = new ArrayList<>();
     private ArrayList<String> newsUrls = new ArrayList<>();
 
     public SliderItem() {}
 
-    public SliderItem(String id, String image, String text, String title, String news_time, String news_link, LikeButton bookmark, LikeButton likeButton)
+    public SliderItem(String id, String image, String text, String title, String news_time)
     {
         this.id = id;
         this.image = image;
         this.text = text;
         this.title = title;
         this.news_time = news_time;
-        this.news_link = news_link;
-        this.bookmark = bookmark;
-        this.likeButton = likeButton;
     }
 
     public String getAddName() { return addName; }
@@ -79,9 +77,6 @@ public class SliderItem {
     public void setNews_time(String news_time) { this.news_time = news_time; }
     public String getNews_time() { return news_time; }
 
-    public void setNews_link(String news_link) { this.news_link = news_link; }
-    public String getNews_link() { return news_link; }
-
     public void setId(String id) { this.id = id;}
     public String getId(){return id;}
 
@@ -111,4 +106,16 @@ public class SliderItem {
 
     public String getIsAdd() { return isAdd; }
     public void setIsAdd(String isAdd) { this.isAdd = isAdd; }
+
+    public String getBookmark() { return bookmark; }
+    public void setBookmark(String bookmark) { this.bookmark = bookmark; }
+
+    public String getLike() { return like; }
+    public void setLike(String like) { this.like = like; }
+
+    public String getView() { return view; }
+    public void setView(String view) { this.view = view; }
+
+    public String getPoll() { return poll; }
+    public void setPoll(String poll) { this.poll = poll; }
 }

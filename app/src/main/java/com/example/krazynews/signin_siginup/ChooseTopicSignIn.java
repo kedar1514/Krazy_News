@@ -66,7 +66,16 @@ public class ChooseTopicSignIn extends AppCompatActivity {
 
         preferences = getSharedPreferences("PREFERENCE",MODE_PRIVATE);
         editor = preferences.edit();
-
+        editor.putString("corona","gone");
+        editor.putString("politics","gone");
+        editor.putString("startup","gone");
+        editor.putString("india","gone");
+        editor.putString("sports","gone");
+        editor.putString("bollywood","gone");
+        editor.putString("business","gone");
+        editor.putString("technology","gone");
+        editor.putString("international","gone");
+        editor.apply();
         checkTopic();
 
         linearLayout1 = findViewById(R.id.linear_layout1);

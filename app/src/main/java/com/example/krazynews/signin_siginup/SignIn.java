@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -31,6 +32,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.krazynews.ForgotPasswordEmail;
 import com.example.krazynews.MainActivity;
+import com.example.krazynews.NewsLink;
 import com.example.krazynews.R;
 
 import org.json.JSONException;
@@ -61,6 +63,7 @@ public class SignIn extends AppCompatActivity {
     private ProgressBar progressBar;
     private ImageView logo;
     private String URL_LOGIN = "https://www.krazyfox.in/krazynews/app/login.php";
+    private String URL_PASS = "https://www.krazyfox.in/krazynews/forgot-password.php";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +79,15 @@ public class SignIn extends AppCompatActivity {
         boldText = findViewById(R.id.bold_text);
         longText = findViewById(R.id.long_text);
         logo = findViewById(R.id.logo);
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(URL_PASS));
+                startActivity(intent);
+            }
+        });
 
         signIn.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -95,25 +107,25 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Pair[] pairs = new Pair[4];
-                pairs[0] = new Pair<View, String>(boldText,"bold");
-                pairs[1] = new Pair<View, String>(longText,"long_text");
-                pairs[2] = new Pair<View, String>(logo,"main_image");
-                pairs[3] = new Pair<View, String>(signIn,"sign_in_btn");
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SignIn.this,pairs);
-                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class), options.toBundle());
-                }
-                else{
-                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class));
-                }
-                finish();
-            }
-        });
+//        forgotPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Pair[] pairs = new Pair[4];
+//                pairs[0] = new Pair<View, String>(boldText,"bold");
+//                pairs[1] = new Pair<View, String>(longText,"long_text");
+//                pairs[2] = new Pair<View, String>(logo,"main_image");
+//                pairs[3] = new Pair<View, String>(signIn,"sign_in_btn");
+//
+//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SignIn.this,pairs);
+//                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class), options.toBundle());
+//                }
+//                else{
+//                    startActivity(new Intent(SignIn.this, ForgotPasswordEmail.class));
+//                }
+//                finish();
+//            }
+//        });
     }
 
     public boolean checkDetails(){

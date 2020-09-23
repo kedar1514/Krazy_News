@@ -59,7 +59,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 //  <<,
-public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderViewHolder> {
+public class OtherNewsSliderAdapter extends RecyclerView.Adapter<OtherNewsSliderAdapter.SliderViewHolder> {
     //variable declaration for poll card
     private boolean pollFlag;
     private boolean firstClick=false,secondClick=false,thirdClick=false;
@@ -76,17 +76,18 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     private List<SliderItem> sliderItems;
     private ViewPager2 viewPager2;
     private Context c, popContext;
-    private String flagPoll;
+    private String flagPoll,From;
     private String URL_ADD = "https://www.krazyfox.in/krazynews/api/addviews.php";
     private String URL_POLL = "https://www.krazyfox.in/krazynews/api/poll.php";
     private String URL_BOOKMARK = "https://www.krazyfox.in/krazynews/api/bookmark.php";
     private String URL_LIKE = "https://www.krazyfox.in/krazynews/api/like.php";
-    private String id, email, url, image, title, flag;
+    private String id, email, url, image, title, bookmarkFlag, likeFlag;
     private SharedPreferences preferences;
-    public SliderAdapter(Context c,List<SliderItem> sliderItems, ViewPager2 viewPager2) {
+    public OtherNewsSliderAdapter(Context c,List<SliderItem> sliderItems, ViewPager2 viewPager2, String From) {
         this.sliderItems = sliderItems;
         this.viewPager2 = viewPager2;
         this.c = c;
+        this.From = From;
     }
 
     @NonNull
@@ -166,7 +167,13 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             }
 
             if(sliderItems.size()-1 == position) {
-                holder.shimmer.setVisibility(View.VISIBLE);
+                if(From.equals("bookmark"))
+                {
+
+                }
+                else{
+                    holder.shimmer.setVisibility(View.VISIBLE);
+                }
             }
             else {
                 holder.shimmer.setVisibility(View.GONE);
@@ -193,7 +200,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                         url = sliderItems.get(position).getNewsUrls().get(0);
                         image = sliderItems.get(position).getImage();
                         title = sliderItems.get(position).getTitle();
-                        flag = "1";
+                        bookmarkFlag = "1";
                         bookmarkNews();
                     }
                     else {
@@ -210,7 +217,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     url = sliderItems.get(position).getNewsUrls().get(0);
                     image = sliderItems.get(position).getImage();
                     title = sliderItems.get(position).getTitle();
-                    flag="2";
+                    bookmarkFlag="2";
                     bookmarkNews();
                 }
             });
@@ -353,7 +360,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 params.put("url",url.trim().toString());
                 params.put("title",title.trim().toString());
                 params.put("image",image.trim().toString());
-                params.put("status",flag.toString());
+                params.put("status",bookmarkFlag.toString());
                 return params;
             }
         };
@@ -399,9 +406,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 return params;
             }
         };
-//        Log.d("stringrequest", "["+stringRequest+"]");
         RequestQueue requestQueue = Volley.newRequestQueue(c);
-//        Log.d("stringrequest", "["+requestQueue+"]");
         requestQueue.add(stringRequest);
     }
 

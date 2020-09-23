@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:id="@+id/cardViewItem"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/add_container"
@@ -52,36 +53,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:textColor="@color/text"
-                        android:layout_marginLeft="10dp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:text="Business"
-                        android:padding="10dp"
-                        android:background="@drawable/buttons"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:textColor="@color/text"
-                        android:layout_marginLeft="10dp"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:text="Startups"
-                        android:padding="10dp"
-                        android:background="@drawable/buttons"/>
-                </LinearLayout>
-
                 <TextView
                     android:id="@+id/news_title"
                     android:layout_width="match_parent"
@@ -118,7 +89,7 @@
                     android:layout_weight="900"
                     android:onClick="hideShowBar"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="230dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="8dp"

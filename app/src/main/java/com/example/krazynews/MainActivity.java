@@ -1,6 +1,7 @@
 package com.example.krazynews;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -25,6 +26,7 @@ import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -32,6 +34,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -68,6 +71,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.krazynews.adapter.SliderAdapter;
 import com.example.krazynews.signin_siginup.GetEmail;
+import com.example.krazynews.signin_siginup.RegistrationName;
+import com.example.krazynews.signin_siginup.SignIn;
+import com.example.krazynews.signin_siginup.SignInSignUp;
 import com.example.krazynews.signin_siginup.VerifyOtp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -97,27 +103,21 @@ public class MainActivity extends AppCompatActivity {
     private String id, all_news;
     private ViewPager2 viewPager2;
     private List<SliderItem> sliderItems;
-    private List<AdsItem> advanceAds;
-    private List<AdsItem> mediumAds;
-    private List<AdsItem> basicAds;
     private ViewPropertyAnimator animate;
     private View shimer_home_page;
     private String notificationType;
     private boolean flag;
+    private String URL_USER_VIEW = "https://www.krazyfox.in/krazynews/api/userview.php";
     private String URL_VIEW = "https://www.krazyfox.in/krazynews/api/views.php";
     private String URL_IMAGE = "https://www.krazyfox.in/krazynews";
     private String URL_TOKEN = "https://www.krazyfox.in/krazynews/app/token.php", token;
-    private String URL_ADVANCE_ADS = "https://www.krazyfox.in/krazynews/api/addadvance.php?count=100&page=1";
-    private String URL_MEDIUM_ADS = "https://www.krazyfox.in/krazynews/api/addmoderate.php?count=100&page=1";
-    private String URL_BASIC_ADS = "https://www.krazyfox.in/krazynews/api/addbasic.php?count=100&page=1";
 
     private String language;
     private ProgressBar progressBar;
-    private int page = 1, count = 50, itemNum = 0;
+    private int page = 1, count = 40, itemNum = 0;
+    private String email, lang, category;
     private int mx = -1;
-    private int advanceAdsCount, mediumAdsCount, basicAdsCount;
-    private int advanceAdsLength, mediumAdsLength, basicAdsLength;
-    private boolean adv,med,bas;
+    private long day1 = 172800000;
     @SuppressLint({"ResourceType", "ClickableViewAccessibility"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,18 +127,43 @@ public class MainActivity extends AppCompatActivity {
         Log.d("acutal token", token);
         preferences = getSharedPreferences("PREFERENCE", MODE_PRIVATE);
         editor = preferences.edit();
+        email = preferences.getString("UserEmail","");
+        Intent mainIntent = getIntent();
+        String notificationsNewsId = mainIntent.getStringExtra("notificationsNewsId");
+        if(notificationsNewsId == null) {
+
+        }else{
+            if(email.isEmpty()) {
+                addNotificationNews(notificationsNewsId,"dummy@gmail.com");
+            }else{
+                addNotificationNews(notificationsNewsId,email);
+            }
+        }
+
+        if (!preferences.getString("Login","").equals("YES")) {
+            long time = preferences.getLong("pastLoginDecisionTime", 0);
+            if (time < System.currentTimeMillis() - 86400000) {
+                loginAlert();
+                editor.putLong("pastLoginDecisionTime", System.currentTimeMillis()).commit();
+            }
+            editor.apply();
+        }
+
+        if (!preferences.getString("Rated","").equals("YES")) {
+            long time = preferences.getLong("pastRatedDecisionTime", 0);
+            if (time < System.currentTimeMillis() - 259200000) {
+                rateAlert();
+                editor.putLong("pastRatedDecisionTime", System.currentTimeMillis()).commit();
+            }
+            editor.apply();
+        }
+
         all_news = preferences.getString("allNews", "");
         myDialog = new Dialog(this);
         fullDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         fullDialog.setContentView(R.layout.activity_loading_acitvity);
         fullDialog.show();
-        toolbarFlag = true;
-        advanceAdsCount = 0;
-        mediumAdsCount = 0;
-        basicAdsCount = 0;
-        adv = true;
-        med = false;
-        bas = false;
+
         if(preferences.getString("Notifications","").equals("DontShow")) {
             editor = preferences.edit();
             editor.putString("Notifications","DontShow");
@@ -194,6 +219,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
         }
+        if(preferences.getString("lang","").equals("hindi")) {
+            lang = "hindi";
+        }
+        else{
+            lang = "english";
+        }
 
         shimer_home_page = findViewById(R.id.shimmer_loading);
         ImageView imageView = findViewById(R.id.dashboard_icon);
@@ -203,25 +234,27 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, DashBoard.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                finish();
+//                finish();
             }
         });
 
         viewPager2 = findViewById(R.id.viewPager);
         sliderItems = new ArrayList<>();
-        advanceAds = new ArrayList<>();
-        mediumAds = new ArrayList<>();
-        basicAds = new ArrayList<>();
         getData(page, count);
         ViewPager2.OnPageChangeCallback pageChangeCallback = new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position > mx) {
+                if(position>mx)
+                {
+                    if(sliderItems.get(position).getIsAdd().equals("0") && sliderItems.get(position).getView().equals("0"))
+                    {
+                        incrementView(sliderItems.get(position).getId());
+                        if(isLoggedin())
+                        {
+                            incrementUserView(sliderItems.get(position).getId(),email);
+                        }
+                    }
                     mx = position;
-//                    if(sliderItems.get(position).getIsAdd().equals("0"))
-//                    {
-//                        incrementView(sliderItems.get(position).getId());
-//                    }
                 }
                 if (position + 1 == sliderItems.size()) {
                     getData(++page, count);
@@ -258,149 +291,63 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-//,     //Fetching Advance Ads
-        JsonArrayRequest jsonArrayRequestAdvance = new JsonArrayRequest(Request.Method.POST, URL_ADVANCE_ADS, null,
-                new com.android.volley.Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        for (int i = 0; i < response.length(); i++) {
-                            AdsItem adsItem = new AdsItem();
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                                adsItem.setId(jsonObject.getString("id"));
-                                adsItem.setName(jsonObject.getString("name"));
-                                adsItem.setUrl(jsonObject.getString("url"));
-                                adsItem.setDisplayPicture(jsonObject.getString("displaypicture"));
-                                adsItem.setStatus(jsonObject.getString("status"));
-                                adsItem.setValue(jsonObject.getString("value"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+         //email, lang, category;
+        if(email.isEmpty())
+        {
+            email = "null";
+        }
 
-                            advanceAds.add(adsItem);
-                        }
-                    }
-                },
-                new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("advanceAdsVolleyError", "onErrorResponse: " + error.toString());
-                    }
-                }
-        );
-
-        int socketTime = 70000;
-        RetryPolicy retryPolicyAdvance = new DefaultRetryPolicy(socketTime,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        jsonArrayRequestAdvance.setRetryPolicy(retryPolicyAdvance);
-        RequestQueue requestQueueAdvance = Volley.newRequestQueue(MainActivity.this);
-        requestQueueAdvance.add(jsonArrayRequestAdvance);
-
-        //fetching Medium Ads
-        JsonArrayRequest jsonArrayRequestMedium = new JsonArrayRequest(Request.Method.GET, URL_MEDIUM_ADS, null,
-                new com.android.volley.Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        for (int i = 0; i < response.length(); i++) {
-                            AdsItem adsItem = new AdsItem();
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                                adsItem.setId(jsonObject.getString("id"));
-                                adsItem.setName(jsonObject.getString("name"));
-                                adsItem.setUrl(jsonObject.getString("url"));
-                                adsItem.setDisplayPicture(jsonObject.getString("displaypicture"));
-                                adsItem.setStatus(jsonObject.getString("status"));
-                                adsItem.setValue(jsonObject.getString("value"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            mediumAds.add(adsItem);
-                        }
-                    }
-                },
-                new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        );
-
-        RetryPolicy retryPolicyMedium = new DefaultRetryPolicy(socketTime,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        jsonArrayRequestMedium.setRetryPolicy(retryPolicyMedium);
-        RequestQueue requestQueueMedium = Volley.newRequestQueue(MainActivity.this);
-        requestQueueMedium.add(jsonArrayRequestMedium);
-
-        // fetching basic ads
-        JsonArrayRequest jsonArrayRequestBasic = new JsonArrayRequest(Request.Method.GET, URL_BASIC_ADS, null,
-                new com.android.volley.Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("basicAds", "onResponse: "+response);
-                        for (int i = 0; i < response.length(); i++) {
-                            AdsItem adsItem = new AdsItem();
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject = response.getJSONObject(i);
-                                adsItem.setId(jsonObject.getString("id"));
-                                adsItem.setName(jsonObject.getString("name"));
-                                adsItem.setUrl(jsonObject.getString("url"));
-                                adsItem.setDisplayPicture(jsonObject.getString("displaypicture"));
-                                adsItem.setStatus(jsonObject.getString("status"));
-                                adsItem.setValue(jsonObject.getString("value"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            basicAds.add(adsItem);
-                        }
-                    }
-                },
-                new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        );
-
-        RetryPolicy retryPolicyBasic = new DefaultRetryPolicy(socketTime,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        jsonArrayRequestBasic.setRetryPolicy(retryPolicyBasic);
-        RequestQueue requestQueueBasic = Volley.newRequestQueue(MainActivity.this);
-        requestQueueBasic.add(jsonArrayRequestAdvance);
-
-
-        advanceAdsLength = advanceAds.size();
-        mediumAdsLength = mediumAds.size();
-        basicAdsLength = basicAds.size();
-        Log.d("advanceAdsLength", "getData: "+advanceAdsLength);
-        Log.d("mediumAdsLength", "getData: "+mediumAdsLength);
-        Log.d("basicAdsLength", "getData: "+basicAdsLength);
-
+        category = "";
+        if (preferences.getString("corona", "").equals("visible"))
+        {
+            category = category + "Corona,";
+        }
+        if (preferences.getString("politics", "").equals("visible"))
+        {
+            category = category + "Politics,";
+        }
+        if (preferences.getString("startup", "").equals("visible"))
+        {
+            category = category + "Startup,";
+        }
+        if (preferences.getString("india", "").equals("visible"))
+        {
+            category = category + "India,";
+        }
+        if (preferences.getString("sports", "").equals("visible"))
+        {
+            category = category + "Sports,";
+        }
+        if (preferences.getString("bollywood", "").equals("visible"))
+        {
+            category = category + "Bollywood,";
+        }
+        if (preferences.getString("business", "").equals("visible"))
+        {
+            category = category + "Business,";
+        }
+        if (preferences.getString("technology", "").equals("visible"))
+        {
+            category = category + "Technology,";
+        }
+        if (preferences.getString("international", "").equals("visible"))
+        {
+            category = category + "International,";
+        }
         //fetching news
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://www.krazyfox.in/krazynews/api/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
-
         MainInterface mainInterface = retrofit.create(MainInterface.class);
-        Call<String> call = mainInterface.STRING_CALL(page, count);
+//        Log.d("email", "getData: "+email);
+        Call<String> call = mainInterface.STRING_CALL(page, count,email, lang, category);
+        Log.d("urlCall", "getData: "+call.request().url());
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 //                Log.d("tagconvertstr", "["+response+"]");
-//                Log.d("responseBody", "[" + response.body() + "]");
+                Log.d("responseBody", "[" + response.body() + "]");
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         JSONArray jsonArray = new JSONArray(response.body());
@@ -426,6 +373,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void parseResult(JSONArray jsonArray) {
+
         categories_flag = false;
         if (preferences.getString("corona", "").equals("visible") || preferences.getString("politics", "").equals("visible") ||
                 preferences.getString("startup", "").equals("visible") || preferences.getString("india", "").equals("visible") ||
@@ -442,167 +390,76 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 SliderItem sliderItem = new SliderItem();
-                sliderItem.setImage(URL_IMAGE + jsonObject.getString("displaypicture").substring(2));
-                String lang = preferences.getString("lang", "");
-                if (lang.equals("hindi")) {
-                    if (jsonObject.getString("hindititle").equals("")) {
-                        continue;
-                    } else {
-                        sliderItem.setTitle(jsonObject.getString("hindititle"));
-                        sliderItem.setText(jsonObject.getString("hindidescription"));
-                    }
-                } else {
-                    sliderItem.setTitle(jsonObject.getString("title"));
-                    sliderItem.setText(jsonObject.getString("description"));
+                Log.d("Api Data", "parseResult: "+jsonObject);
+                if(jsonObject.getString("add").equals("1"))
+                {
+                    sliderItem.setAddID(jsonObject.getString("id"));
+                    sliderItem.setAddValue(jsonObject.getString("value"));
+                    sliderItem.setAddName(jsonObject.getString("name"));
+                    sliderItem.setAddStatus(jsonObject.getString("status"));
+                    sliderItem.setAddUrl(jsonObject.getString("url"));
+                    sliderItem.setAddImage(URL_IMAGE + jsonObject.getString("displaypicture").substring(2));
+                    sliderItem.setIsAdd("1");
                 }
-                ArrayList<String> newsImages = new ArrayList<>();
-                ArrayList<String> newsUrls = new ArrayList<>();
-                String[] urls = jsonObject.getString("publisherURL").split(",", -2);
-                for (String a : urls) {
-//                    Log.d("newsUrl Main", "parseResult: "+a);
-                    newsUrls.add(a);
-                }
-                sliderItem.setNewsUrls(newsUrls);
+                else{
 
-                JSONArray publisherImages = jsonObject.getJSONArray("publisherImages");
-                for (int j = 0; j < publisherImages.length(); j++) {
-                    newsImages.add(URL_IMAGE + publisherImages.getString(j).substring(2));
-                }
-                sliderItem.setNewsImages(newsImages);
-//                    sliderItem.setNews_link(jsonObject.getString());
-                sliderItem.setNews_by("by/" + jsonObject.getString("author"));
-                sliderItem.setId(jsonObject.getString("id").toString());
-                sliderItem.setPollQuestion(jsonObject.getString("poleQuestion"));
-                sliderItem.setYes(jsonObject.getString("poleYes"));
-                sliderItem.setNo(jsonObject.getString("poleNo"));
-                sliderItem.setMaybe(jsonObject.getString("poleMaybe"));
-                sliderItem.setIsAdd("0");
-                Calendar calendar = Calendar.getInstance();
-                String[] currDate = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(calendar.getTime()).split("/", -1);
-                String newsDate = jsonObject.getString("date");
-//                  Log.d("newsUrl Main",  newsDate.substring(8,10)+"parseResult: "+currDate/*.substring(1,3)*/);
-                if (currDate[1].equals(newsDate.substring(8, 10))) {
-                    sliderItem.setNews_time(jsonObject.getString("time"));
-                } else {
-//                    Log.d("newsUrl Main",  newsDate.substring(5,7));
-                    String[] month = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-                    sliderItem.setNews_time(newsDate.substring(8, 10) + "/" + month[Integer.parseInt(newsDate.substring(5, 7)) - 1]);
-                }
-                String categories = jsonObject.getString("categories").toString();
-                if (categories_flag == false || all_news.equals("true")) {
-                    sliderItems.add(sliderItem);
-                } else if (categories_flag) {
-                    switch (categories) {
-                        case "Corona":
-                            if (preferences.getString("corona", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
+                    sliderItem.setImage(URL_IMAGE + jsonObject.getString("displaypicture").substring(2));
+                    String lang = preferences.getString("lang", "");
 
-                        case "Politics":
-                            if (preferences.getString("politics", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Startups":
-                            if (preferences.getString("startup", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "India":
-                            if (preferences.getString("india", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Sports":
-                            if (preferences.getString("sports", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Bollywood":
-                            if (preferences.getString("bollywood", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Business":
-                            if (preferences.getString("business", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Technology":
-                            if (preferences.getString("technology", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "International":
-                            if (preferences.getString("international", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-
-                        case "Entertainment":
-                            if (preferences.getString("entertainment", "").equals("visible")) {
-                                sliderItems.add(sliderItem);
-                            }
-                            break;
-                    }
-
-                    if(i%3==0)
-                    {
-                        SliderItem adsItem = new SliderItem();
-                        if(adv) {
-                            AdsItem tempAds = advanceAds.get((advanceAdsCount%advanceAdsLength));
-                            adsItem.setIsAdd("1");
-                            Log.d("isAddBlock", adsItem.getIsAdd());
-                            adsItem.setAddImage(URL_IMAGE + tempAds.getDisplayPicture().substring(2));
-                            adsItem.setAddUrl(tempAds.getUrl());
-                            adsItem.setAddID(tempAds.getId());
-                            adsItem.setAddStatus(tempAds.getStatus());
-                            adsItem.setAddName(tempAds.getName());
-                            adsItem.setAddValue(tempAds.getValue());
-                            sliderItems.add(adsItem);
-                            adv = false;
-                            med = true;
-                            bas = false;
-                            advanceAdsCount++;
-                        }else if(med){
-                            AdsItem tempAds = mediumAds.get((mediumAdsCount%mediumAdsLength));
-                            adsItem.setIsAdd("1");
-                            adsItem.setAddImage(URL_IMAGE + tempAds.getDisplayPicture().substring(2));
-                            adsItem.setAddUrl(tempAds.getUrl());
-                            adsItem.setAddID(tempAds.getId());
-                            adsItem.setAddStatus(tempAds.getStatus());
-                            adsItem.setAddName(tempAds.getName());
-                            adsItem.setAddValue(tempAds.getValue());
-                            sliderItems.add(adsItem);
-                            adv = false;
-                            med = true;
-                            bas = false;
-                            mediumAdsCount++;
-                        }else if(bas){
-                            AdsItem tempAds = basicAds.get((basicAdsCount%mediumAdsLength));
-                            adsItem.setIsAdd("1");
-                            adsItem.setAddImage(URL_IMAGE + tempAds.getDisplayPicture().substring(2));
-                            adsItem.setAddUrl(tempAds.getUrl());
-                            adsItem.setAddID(tempAds.getId());
-                            adsItem.setAddStatus(tempAds.getStatus());
-                            adsItem.setAddName(tempAds.getName());
-                            adsItem.setAddValue(tempAds.getValue());
-                            sliderItems.add(adsItem);
-                            adv = false;
-                            med = false;
-                            bas = true;
-                            basicAdsCount++;
+                    if (lang.equals("hindi")) {
+                        if (jsonObject.getString("hindititle").equals("")) {
+                            sliderItem.setTitle(jsonObject.getString("title"));
+                            sliderItem.setText(jsonObject.getString("description"));
+                        } else {
+                            sliderItem.setTitle(jsonObject.getString("hindititle"));
+                            sliderItem.setText(jsonObject.getString("hindidescription"));
                         }
+                    } else {
+                        sliderItem.setTitle(jsonObject.getString("title"));
+                        sliderItem.setText(jsonObject.getString("description"));
+                    }
+
+                    ArrayList<String> newsImages = new ArrayList<>();
+                    ArrayList<String> newsUrls = new ArrayList<>();
+                    String[] urls = jsonObject.getString("publisherURL").split(",", -2);
+                    for (String a : urls) {
+                        newsUrls.add(a);
+                    }
+                    sliderItem.setNewsUrls(newsUrls);
+                    JSONArray publisherImages = jsonObject.getJSONArray("publisherImages");
+                    for (int j = 0; j < publisherImages.length(); j++) {
+                        newsImages.add(URL_IMAGE + publisherImages.getString(j).substring(2));
+                    }
+                    sliderItem.setNewsImages(newsImages);
+
+                    sliderItem.setNews_by("by " + jsonObject.getString("author"));
+                    sliderItem.setId(jsonObject.getString("id").toString());
+                    sliderItem.setPollQuestion(jsonObject.getString("poleQuestion"));
+                    sliderItem.setYes(jsonObject.getString("poleYes"));
+                    sliderItem.setNo(jsonObject.getString("poleNo"));
+                    sliderItem.setMaybe(jsonObject.getString("poleMaybe"));
+                    sliderItem.setIsAdd("0");
+
+                    Log.d("bookmarkValue", jsonObject.getString("bookmark"));
+                    Log.d("likeValue", jsonObject.getString("like"));
+                    sliderItem.setBookmark(jsonObject.getString("bookmark"));
+                    sliderItem.setLike(jsonObject.getString("like"));
+                    sliderItem.setView(jsonObject.getString("view"));
+                    sliderItem.setPoll(jsonObject.getString("poll"));
+
+                    Calendar calendar = Calendar.getInstance();
+                    String[] currDate = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(calendar.getTime()).split("/", -1);
+                    String newsDate = jsonObject.getString("date");
+//                  Log.d("newsUrl Main",  newsDate.substring(8,10)+"parseResult: "+currDate/*.substring(1,3)*/);
+                    if (currDate[1].equals(newsDate.substring(8, 10))) {
+                        sliderItem.setNews_time(jsonObject.getString("time"));
+                    } else {
+//                    Log.d("newsUrl Main",  newsDate.substring(5,7));
+                        String[] month = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                        sliderItem.setNews_time(newsDate.substring(8, 10) + " " + month[Integer.parseInt(newsDate.substring(5, 7)) - 1]);
                     }
                 }
+                sliderItems.add(sliderItem);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -610,11 +467,10 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(new SliderAdapter(this, sliderItems, viewPager2));
         viewPager2.setClipToPadding(false);
         viewPager2.setClipChildren(false);
-        viewPager2.setOffscreenPageLimit(3);
+        viewPager2.setOffscreenPageLimit(5);
         viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-
         viewPager2.setCurrentItem(itemNum - 1, false);
-        itemNum += 50;
+        itemNum += 40;
         fullDialog.hide();
     }
 
@@ -670,9 +526,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.i("view", "[" + response + "]");
+                            Log.d("view", "[" + response + "]");
                             JSONObject jsonObject = new JSONObject(response);
                             String success = jsonObject.getString("success").toString();
+                            if(success.equals("true")){
+//                                Toast.makeText(getApplicationContext(),"incremented View", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(),"incremented View failed", Toast.LENGTH_LONG).show();
+                            }
                             //Toast.makeText(GetEmail.this, "Register Success!", Toast.LENGTH_LONG).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -747,6 +609,205 @@ public class MainActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    public boolean isLoggedin() {
+        preferences = getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
+        String loggedIn = preferences.getString("Login","");
+        if(loggedIn.equals("YES"))
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public void incrementUserView(final String id, final String email){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_USER_VIEW,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.d("userview", "onResponse: "+response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            String success = jsonObject.getString("success").toString();
+                            if(success.equals("true"))
+                            {
+//                                Toast.makeText(MainActivity.this,"Viewd", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this,"Something Went Wrong!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this,"Something Went Wrong!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Something Went Wrong!" + error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id",id);
+                params.put("email",email);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    public void addNotificationNews(String notificationsNewsId, String email){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.krazyfox.in/krazynews/api/")
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+        ExtraNewsInterface extraNewsInterface = retrofit.create(ExtraNewsInterface.class);
+//        Log.d("email", "getData: "+email);
+        Call<String> call = extraNewsInterface.STRING_CALL(notificationsNewsId, email);
+//        Log.d("urlCall", "getData: "+call.request().url());
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+//                Log.d("tagconvertstr", "["+response+"]");
+                Log.d("responseBody", "[" + response.body() + "]");
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response.body());
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+//                        Log.d("responseSuccesful", "[" + response.isSuccessful() + "]");
+//                        String title = jsonObject.getString("title");
+//                        Log.d("tagconvertstr", "[" + title + "]");
+                        SliderItem sliderItem = new SliderItem();
+                        sliderItem.setImage(URL_IMAGE + jsonObject.getString("displaypicture").substring(2));
+                        String lang = preferences.getString("lang", "");
+                        if (lang.equals("hindi")) {
+                            if (jsonObject.getString("hindititle").equals("")) {
+                                sliderItem.setTitle(jsonObject.getString("title"));
+                                sliderItem.setText(jsonObject.getString("description"));
+                            } else {
+                                sliderItem.setTitle(jsonObject.getString("hindititle"));
+                                sliderItem.setText(jsonObject.getString("hindidescription"));
+                            }
+                        } else {
+                            sliderItem.setTitle(jsonObject.getString("title"));
+                            sliderItem.setText(jsonObject.getString("description"));
+                        }
+                        ArrayList<String> newsImages = new ArrayList<>();
+                        ArrayList<String> newsUrls = new ArrayList<>();
+                        String[] urls = jsonObject.getString("publisherURL").split(",", -2);
+                        for (String a : urls) {
+                            newsUrls.add(a);
+                        }
+                        sliderItem.setNewsUrls(newsUrls);
+                        JSONArray publisherImages = jsonObject.getJSONArray("publisherImages");
+                        for (int j = 0; j < publisherImages.length(); j++) {
+                            newsImages.add(URL_IMAGE + publisherImages.getString(j).substring(2));
+                        }
+                        sliderItem.setNewsImages(newsImages);
+
+                        sliderItem.setNews_by("by " + jsonObject.getString("author"));
+                        sliderItem.setId(jsonObject.getString("id").toString());
+                        sliderItem.setPollQuestion(jsonObject.getString("poleQuestion"));
+                        sliderItem.setYes(jsonObject.getString("poleYes"));
+                        sliderItem.setNo(jsonObject.getString("poleNo"));
+                        sliderItem.setMaybe(jsonObject.getString("poleMaybe"));
+                        sliderItem.setIsAdd("0");
+
+                        Log.d("bookmarkValue", jsonObject.getString("bookmark"));
+                        Log.d("likeValue", jsonObject.getString("like"));
+                        sliderItem.setBookmark(jsonObject.getString("bookmark"));
+                        sliderItem.setLike(jsonObject.getString("like"));
+                        sliderItem.setView(jsonObject.getString("view"));
+                        sliderItem.setPoll(jsonObject.getString("poll"));
+
+                        Calendar calendar = Calendar.getInstance();
+                        String[] currDate = DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(calendar.getTime()).split("/", -1);
+                        String newsDate = jsonObject.getString("date");
+//                  Log.d("newsUrl Main",  newsDate.substring(8,10)+"parseResult: "+currDate/*.substring(1,3)*/);
+                        if (currDate[1].equals(newsDate.substring(8, 10))) {
+                            sliderItem.setNews_time(jsonObject.getString("time"));
+                        } else {
+//                    Log.d("newsUrl Main",  newsDate.substring(5,7));
+                            String[] month = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                            sliderItem.setNews_time(newsDate.substring(8, 10) + " " + month[Integer.parseInt(newsDate.substring(5, 7)) - 1]);
+                        }
+                        sliderItems.add(sliderItem);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("jsonError", "[" + e + "]");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void loginAlert(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        startActivity(new Intent(MainActivity.this, SignIn.class));
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        startActivity(new Intent(MainActivity.this, RegistrationName.class));
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        finish();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(Html.fromHtml("<font color='#FD676C'>Login OR SignUp</font>"));
+        builder.setMessage("You really seem to like this app, "
+                + "since you are not logged-in"
+                + " you are missing some amazing feature.")
+                .setPositiveButton(Html.fromHtml("<font color='#FD676C'>Sign In</font>"), dialogClickListener)
+                .setNegativeButton(Html.fromHtml("<font color='#FD676C'>Sign Up</font>"), dialogClickListener)
+                .setNeutralButton(Html.fromHtml("<font color='#FD676C'>No, Thanks </font>"), dialogClickListener).show();
+    }
+
+    public void rateAlert(){
+        preferences = getSharedPreferences("PREFERENCE", MODE_PRIVATE);
+        editor = preferences.edit();
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        startActivity(new Intent(MainActivity.this, SignIn.class));
+                        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        finish();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(Html.fromHtml("<font color='#FD676C'>Rate this app</font>"));
+        builder.setMessage("You really seem to like this app, "
+                + "rate this app")
+                .setPositiveButton(Html.fromHtml("<font color='#FD676C'>Rate Now</font>"), dialogClickListener)
+                .setNeutralButton(Html.fromHtml("<font color='#FD676C'>Later</font>"), dialogClickListener).show();
     }
 }
 //  <<,

@@ -9,12 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".signin_siginup.VerifyOtp"></activity>
+        <activity android:name=".OtherNewsAcivity"></activity>
+        <activity android:name=".signin_siginup.VerifyOtp" />
         <activity android:name=".ForgotPasswordEmail" />
         <activity android:name=".signin_siginup.ChooseTopicSignIn" />
         <activity android:name=".NewsLink" />
-        <activity android:name=".ToolBar" />
-        <activity android:name=".LoadingAcitvity" />
         <activity android:name=".signin_siginup.GetPassword" />
         <activity android:name=".NewsPopUp" />
         <activity android:name=".signin_siginup.SelectTopic" />
@@ -25,19 +24,10 @@
             android:name=".DashBoard"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".Trending"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
-            android:name=".Bookmark"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
             android:name=".Profile"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".signin_siginup.SignIn"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
-            android:name=".signin_siginup.SignUp"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".signin_siginup.SignInSignUp"
@@ -62,9 +52,9 @@
             </intent-filter>
         </service>
     </application>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -110,7 +111,7 @@ public class Profile extends AppCompatActivity implements AdapterView.OnItemSele
             String name = preferences.getString("UserName","");
             String email = preferences.getString("UserEmail","");
             String city = preferences.getString("UserCity","");
-
+            Log.d("ProfileEmail", "getData: "+preferences.getString("UserEmail",""));
             userName.setText(name);
             userEmail.setText(email);
             userCity.setText(city);

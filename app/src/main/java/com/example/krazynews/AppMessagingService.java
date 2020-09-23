@@ -2,7 +2,9 @@ package com.example.krazynews;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -10,6 +12,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 public class AppMessagingService extends FirebaseMessagingService {
 
@@ -27,20 +30,23 @@ public class AppMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d("remoteMessage", "onMessageReceived: "+ remoteMessage.getNotification().getTitle());
-        if(getSharedPreferences("PREFERENCE", MODE_PRIVATE).getString("Notifications","").equals("Show")){
-            showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
-        }
+//        Log.d("remoteMessage", "onMessageReceived: "+ );
+        showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody(),remoteMessage.getData().get("id"));
     }
 
-    public void showNotification(String title, String message){
+    public void showNotification(String title, String message, String id){
         Notification.Builder builder = null;
+        Intent i  = new Intent(this, Profile.class);
+        i.putExtra("notificationsNewsId",id);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,i,PendingIntent.FLAG_UPDATE_CURRENT);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             builder = new Notification.Builder(this,"AppNotification")
                     .setContentTitle(title)
-                    .setSmallIcon(R.drawable.coronaicon)
+                    .setContentText(message)
+                    .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+                    .setColor(ContextCompat.getColor(getApplicationContext(),R.color.colorPrimary))
                     .setAutoCancel(true)
-                    .setContentText(message);
+                    .setContentIntent(pendingIntent);
         }
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
