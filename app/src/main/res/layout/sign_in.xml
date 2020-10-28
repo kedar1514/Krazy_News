@@ -28,7 +28,7 @@
         android:fontFamily="@font/source_sans_pro_bold"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginLeft="20dp"
+        android:layout_gravity="center_horizontal"
         android:transitionName="bold_text"/>
 
     <LinearLayout
@@ -36,7 +36,8 @@
         android:transitionName="long_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,7 +46,6 @@
             android:textSize="25sp"
             android:fontFamily="@font/open_sans"
             android:textColor="@color/colorPrimaryDark"
-            android:layout_marginLeft="20dp"
             />
 
         <TextView
