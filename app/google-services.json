@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "133466273604",
+    "firebase_url": "https://krazy-news-13e7c.firebaseio.com",
+    "project_id": "krazy-news-13e7c",
+    "storage_bucket": "krazy-news-13e7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133466273604:android:f45658d1954e2cd84b0911",
+        "android_client_info": {
+          "package_name": "com.example.krazynews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133466273604-n7oqrijekr8bnt0t55c7hnbo986tf7t7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.krazynews",
+            "certificate_hash": "5d9dab20b5ba3deb70b6e297819a2ebce587e740"
+          }
+        },
+        {
+          "client_id": "133466273604-s9hg69pl9o5ak755gtnm74sb7fb0ig9m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeKDZ7JDfJLFU7UR2od3h4xFZLELTI404"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133466273604-s9hg69pl9o5ak755gtnm74sb7fb0ig9m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
