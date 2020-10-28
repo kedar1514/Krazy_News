@@ -9,19 +9,21 @@
     android:background="#F5F4F9"
     >
 
-    <TextView
+    <Button
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="end"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="5dp"
         android:text="Skip"
+        android:background="@android:color/transparent"
+        android:drawableEnd="@drawable/ic_aero"
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@color/colorPrimary"
-        />
+        android:drawableRight="@drawable/ic_aero" />
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -29,7 +31,7 @@
         android:layout_gravity="center"
         android:src="@drawable/mainimage"
         android:transitionName="main_image"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="5dp"/>
 
     <TextView
         android:id="@+id/info_text"

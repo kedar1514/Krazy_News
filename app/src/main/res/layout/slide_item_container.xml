@@ -44,13 +44,14 @@
                     android:id="@+id/news_image"
                     android:layout_width="match_parent"
                     android:layout_height="230dp"
+                    android:layout_weight="100"
                     android:scaleType="centerCrop"
                     android:src="@drawable/image1"
-                    android:layout_weight="100"
+                    android:transitionName="news_image"
                     app:layout_constraintBottom_toTopOf="@id/news_title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -86,6 +87,7 @@
                     android:id="@+id/news_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:transitionName="news_title"
                     android:fontFamily="@font/nirmalabold"
                     android:textStyle="bold"
                     android:layout_weight="10"
@@ -208,6 +210,17 @@
                         app:layout_constraintLeft_toRightOf="@id/share"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <ImageView
+                        android:id="@+id/comment"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:src="@drawable/ic_comment"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@id/bookmark"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <com.like.LikeButton
                         android:id="@+id/like_button"
                         android:layout_width="40dp"
@@ -261,13 +274,113 @@
                         app:layout_constraintEnd_toEndOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
-            <include
-                layout="@layout/news_page_shimmer"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:id="@+id/shimmer_loading"
-                android:visibility="invisible"
-                />
+                <include
+                    layout="@layout/news_page_shimmer"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/shimmer_loading"
+                    android:visibility="invisible"
+                    />
         </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/random"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:elevation="5dp"
+            android:background="@drawable/comment_background"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/hideComment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:weightSum="100"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/commentInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="80"
+                    android:fontFamily="@font/clanproregular"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:foregroundTint="@color/colorPrimary"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    android:textColorLink="@color/colorPrimary"
+                    android:shadowColor="@color/colorPrimary"
+                    android:textColorHighlight="@color/colorPrimary"
+                    android:hint="Comment Something"/>
+                <ImageView
+                    android:id="@+id/sendComment"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="20"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_send"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:requiresFadingEdge="vertical"
+            android:background="@color/text"
+            android:visibility="visible">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/commentsProgressbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="130dp"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/noCommentsFound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="150dp"
+                    android:visibility="gone"
+                    android:textColor="@color/colorPrimary"
+                    android:text="No comments found!"
+                    android:fontFamily="@font/clanproregular"
+                    android:textSize="25sp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentsRecyclerview"
+                    android:visibility="gone"
+                    android:layoutAnimation="@anim/recyler_animation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 </RelativeLayout>

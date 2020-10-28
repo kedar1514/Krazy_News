@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
@@ -30,13 +32,14 @@ public class AppMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-//        Log.d("remoteMessage", "onMessageReceived: "+ );
+        JSONObject jsonObject = new JSONObject(remoteMessage.getData());
+        Log.d("remoteMessage", "onMessageReceived: "+ jsonObject);
         showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody(),remoteMessage.getData().get("id"));
     }
 
     public void showNotification(String title, String message, String id){
         Notification.Builder builder = null;
-        Intent i  = new Intent(this, Profile.class);
+        Intent i  = new Intent(this, MainActivity.class);
         i.putExtra("notificationsNewsId",id);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,1,i,PendingIntent.FLAG_UPDATE_CURRENT);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

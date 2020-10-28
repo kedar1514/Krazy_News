@@ -10,8 +10,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:src="@drawable/registerimage"
         android:transitionName="main_image"/>
 
@@ -20,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello There,"
-        android:layout_marginTop="50dp"
         android:textSize="35sp"
         android:fontFamily="@font/source_sans_pro_bold"
         android:textStyle="bold"
@@ -96,7 +96,7 @@
         android:textColor="#FFFFFF"
         android:textAllCaps="false"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:transitionName="fixed_button"/>
 
 

@@ -55,10 +55,11 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/dashboardScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="100dp"
+        android:fadingEdgeLength="70dp"
         android:background="@color/text">
 
         <LinearLayout
@@ -72,17 +73,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="@font/source_sans_pro"
                 android:text="Categories"
-                android:textColor="#101010"
+                android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
             <GridLayout
                 android:id="@+id/category_block"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="12dp"
                 android:columnCount="3"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="10dp"
@@ -111,7 +112,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="All news"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -138,7 +139,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="My Feed"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -165,7 +166,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="Top News"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -191,7 +192,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="Trending Now"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -217,7 +218,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="Bookmarks"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -243,7 +244,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/source_sans_pro"
                         android:text="Unread"
-                        android:textColor="#101010"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
             </GridLayout>
@@ -788,7 +789,7 @@
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/source_sans_pro"
                 android:text="Choose Topic"
-                android:textColor="#101010"
+                android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
             <GridLayout
@@ -841,7 +842,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Coronavirus"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -893,7 +894,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Politics"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -945,7 +946,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Startups"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -996,7 +997,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="India"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
                         <ImageView
                             android:id="@+id/check4"
@@ -1045,7 +1046,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Sports"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -1096,7 +1097,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Bollywood"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -1146,7 +1147,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Business"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -1197,7 +1198,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="Technology"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView
@@ -1247,7 +1248,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/source_sans_pro"
                                 android:text="International"
-                                android:textColor="#101010" />
+                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <ImageView

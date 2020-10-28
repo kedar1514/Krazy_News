@@ -9,9 +9,15 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -149,12 +155,38 @@ public class DashBoard extends Activity {
                 if(networkState())
                 {
                     if(covidCountVisibilty) {
-//                        covidCountLayout.animate().alpha(0.0f).setDuration(2000);
+                        Transition transition = null;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            transition = new Slide((Gravity.BOTTOM));
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.setDuration(1000);
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.addTarget(R.id.covid_counts_layout);
+                        }
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            TransitionManager.beginDelayedTransition((ViewGroup) covidCountLayout.getParent(), transition);
+                        }
                         covidCountLayout.setVisibility(View.VISIBLE);
                         covidCountVisibilty = false;
                         covidCountButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
                     }else{
-//                        covidCountLayout.animate().alpha(0.0f).setDuration(2000);
+                        Transition transition = null;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            transition = new Slide((Gravity.BOTTOM));
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.setDuration(1000);
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.addTarget(R.id.covid_counts_layout);
+                        }
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            TransitionManager.beginDelayedTransition((ViewGroup) covidCountLayout.getParent(), transition);
+                        }
                         covidCountLayout.setVisibility(View.GONE);
                         covidCountVisibilty = true;
                         covidCountButton.setBackgroundResource(R.drawable.ic_keyboard_arrow_down_black_24dp);

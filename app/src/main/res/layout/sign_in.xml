@@ -81,18 +81,26 @@
         android:textColor="#FF0000"
         android:layout_gravity="center"/>
 
-    <EditText
-        android:id="@+id/sign_in_password"
-        android:layout_width="310dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:ems="10"
-        android:paddingLeft="7dp"
-        android:textSize="19sp"
         android:backgroundTint="@color/colorPrimary"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        app:boxStrokeColor="@color/colorPrimary"
+        app:passwordToggleEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/sign_in_password"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:paddingLeft="7dp"
+            android:textSize="19sp"
+            android:backgroundTint="@color/colorPrimary"
+            android:hint="Password"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <TextView
         android:id="@+id/sign_in_password_warrning"
@@ -131,11 +139,12 @@
         android:text="Forgot password?"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:textSize="18sp"
         android:fontFamily="@font/source_sans_pro"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
@@ -179,11 +188,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/sign_in_google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:src="@drawable/google"/>
 

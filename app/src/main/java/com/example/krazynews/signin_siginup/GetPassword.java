@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.krazynews.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public class GetPassword extends AppCompatActivity {
     private String name,email,city,password;
     private Button next;
     private ProgressBar progressBar;
-    private EditText getPassword;
+    private TextInputEditText getPassword;
     private TextView passwordError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

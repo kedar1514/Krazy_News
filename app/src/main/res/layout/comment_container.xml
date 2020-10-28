@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp"
+    app:cardBackgroundColor="@color/text"
+    app:cardCornerRadius="9dp"
+    android:orientation="vertical"
+    android:elevation="50dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/clanprobold"
+            android:textSize="16sp"
+            android:layout_marginTop ="5dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textStyle="bold"
+            android:textColor="#3C3C3C"
+            android:text="Kedar Choudhary"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/userComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/clanproregular"
+                android:layout_marginBottom="3dp"
+                android:layout_marginRight="10dp"
+                android:textSize="16sp"
+                android:textColor="#6C6B6B"
+                android:text="I think this would not work I think this would not work I think this would not work I think this would not "/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:visibility="visible"
+                android:orientation="horizontal">
+
+                <com.like.LikeButton
+                    android:id="@+id/like_comment"
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:layout_marginBottom="5dp"
+                    app:icon_size="30dp"
+                    app:circle_start_color="@color/colorPrimary"
+                    app:circle_end_color="@color/colorPrimary"
+                    app:like_drawable="@drawable/ic_thumb_up"
+                    app:unlike_drawable="@drawable/ic_thumb_up2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/share"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="5dp"
+                    android:text="12"/>
+
+                <com.like.LikeButton
+                    android:id="@+id/dislike_comment"
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="5dp"
+                    app:icon_size="30dp"
+                    app:circle_start_color="@color/colorPrimary"
+                    app:circle_end_color="@color/colorPrimary"
+                    app:like_drawable="@drawable/ic_thumb_down"
+                    app:unlike_drawable="@drawable/ic_thumb_down2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/share"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/dislike_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="12"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

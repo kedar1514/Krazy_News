@@ -34,6 +34,7 @@ import com.example.krazynews.ForgotPasswordEmail;
 import com.example.krazynews.MainActivity;
 import com.example.krazynews.NewsLink;
 import com.example.krazynews.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +58,8 @@ public class SignIn extends AppCompatActivity {
                     ".{4,}" +               //at least 4 characters
                     "$"));
     private TextView email_warrning, password_warrning, forgotPassword, boldText;
-    private EditText email, password;
+    private EditText email;
+    private TextInputEditText password;
     private Button signIn;
     private LinearLayout longText;
     private ProgressBar progressBar;

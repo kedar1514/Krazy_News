@@ -18,10 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SignInSignUp extends AppCompatActivity {
-    private Button sign_in;
+    private Button sign_in, skip;
     private Button register;
     private ImageView imageView;
-    private TextView textView, skip;
+    private TextView textView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

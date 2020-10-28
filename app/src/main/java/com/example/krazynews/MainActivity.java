@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.transition.Fade;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -41,6 +42,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.transition.AutoTransition;
 import android.transition.Slide;
+import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView marquee, news_text, toolbar_name;
     private String id, all_news;
     private ViewPager2 viewPager2;
+    private Toolbar toolbar;
     private List<SliderItem> sliderItems;
     private ViewPropertyAnimator animate;
     private View shimer_home_page;
@@ -179,36 +182,33 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         }//Checking default value of notifications string
 
-        if(preferences.getString("Notifications","").equals("Show")) {//firebase notification code
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel channel =
-                        new NotificationChannel("AppNotification", "AppNotification", NotificationManager.IMPORTANCE_DEFAULT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel =
+                    new NotificationChannel("AppNotification", "AppNotification", NotificationManager.IMPORTANCE_DEFAULT);
 
-                NotificationManager manager = getSystemService(NotificationManager.class);
-                manager.createNotificationChannel(channel);
-            }
-
-            if (preferences.getString("Login", " ").equals("YES")) {
-                notificationType = "signUser";
-            } else {
-                notificationType = "guestUser";
-            }
-            FirebaseMessaging.getInstance().subscribeToTopic(notificationType)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String msg = "success";
-                            if (!task.isSuccessful()) {
-                                msg = "failes";
-                            }
-//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-            //firebase notification code
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
         }
 
+        if (preferences.getString("Login", " ").equals("YES")) {
+            notificationType = "signUser";
+        } else {
+            notificationType = "guestUser";
+        }
+        FirebaseMessaging.getInstance().subscribeToTopic(notificationType)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "success";
+                        if (!task.isSuccessful()) {
+                            msg = "failes";
+                        }
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        viewPager2.setAdapter(new SliderAdapter(this, sliderItems, viewPager2));
+        viewPager2.setAdapter(new SliderAdapter(MainActivity.this, sliderItems, viewPager2));
         viewPager2.setClipToPadding(false);
         viewPager2.setClipChildren(false);
         viewPager2.setOffscreenPageLimit(5);

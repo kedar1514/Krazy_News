@@ -19,6 +19,7 @@
         android:background="#FFFFFF"
         android:elevation="15dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:theme="@style/AppTheme"
         app:titleTextColor="@color/colorPrimary">
 

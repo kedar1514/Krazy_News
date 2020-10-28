@@ -2,64 +2,87 @@ package com.example.krazynews.adapter;
 
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.text.Layout;
+import android.os.Build;
+import android.text.Html;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.example.krazynews.MainActivity;
+import com.example.krazynews.CommentItem;
+import com.example.krazynews.CustomLinearLayoutManager;
+import com.example.krazynews.NewsImage;
 import com.example.krazynews.NewsLink;
-import com.example.krazynews.Profile;
 import com.example.krazynews.R;
 import com.example.krazynews.SliderItem;
-import com.example.krazynews.signin_siginup.ChooseTopicSignIn;
+import com.example.krazynews.signin_siginup.RegistrationName;
 import com.example.krazynews.signin_siginup.SignIn;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 //  <<,
 public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderViewHolder> {
+
+    public List<CommentItem> commentItems;
+    public CommentsAdapter commentsAdapter;
     //variable declaration for poll card
     private boolean pollFlag;
     private boolean firstClick=false,secondClick=false,thirdClick=false;
@@ -81,6 +104,8 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     private String URL_POLL = "https://www.krazyfox.in/krazynews/api/poll.php";
     private String URL_BOOKMARK = "https://www.krazyfox.in/krazynews/api/bookmark.php";
     private String URL_LIKE = "https://www.krazyfox.in/krazynews/api/like.php";
+    private String URL_FETCH_COMMENT = "https://www.krazyfox.in/krazynews/api/fetchcomment.php";
+    private String URL_SEND_COMMENT = "https://www.krazyfox.in/krazynews/api/comment.php";
     private String id, email, url, image, title, flag;
     private SharedPreferences preferences;
     public SliderAdapter(Context c,List<SliderItem> sliderItems, ViewPager2 viewPager2) {
@@ -98,7 +123,6 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
     @Override
     public void onBindViewHolder(@NonNull final SliderViewHolder holder, final int position) {
-
         id = sliderItems.get(position).getId();
         if(sliderItems.get(position).getIsAdd().equals("1"))
         {
@@ -159,7 +183,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                             ShowPoll(holder, position,email);
                         }
                         else {
-                            Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                            loginAlert();
                         }
                     }
                 });
@@ -198,7 +222,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     }
                     else {
                         holder.bookmark.setLiked(false);
-                        Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                        loginAlert();
                     }
                 }
 
@@ -227,7 +251,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     }
                     else {
                         holder.likeButton.setLiked(false);
-                        Toast.makeText(c.getApplicationContext(),"Please Sign-In to use this feature ", Toast.LENGTH_SHORT).show();
+                        loginAlert();
                     }
                 }
 
@@ -250,6 +274,105 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                     c.startActivity(Intent.createChooser(intent, "Send To"));
                 }
             });
+
+            holder.comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(isLoggedin())
+                    {
+                        preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
+                        id = sliderItems.get(position).getId();
+                        email = preferences.getString("UserEmail","");
+
+//                        fetchComments(id,email);
+
+                        Transition transition = null;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            transition = new Slide((Gravity.BOTTOM));
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.setDuration(450);
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            transition.addTarget(R.id.random);
+                        }
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            TransitionManager.beginDelayedTransition((ViewGroup) holder.random.getParent(), transition);
+                        }
+                        holder.random.setVisibility(View.VISIBLE);
+                        String postId = sliderItems.get(position).getId();
+                        loadComments(postId,email,holder.recyclerView,holder.noCommentFound,holder.commentsProgressBar);
+
+                    }
+                    else {
+                        loginAlert();
+                    }
+                }
+            });
+
+            holder.hideComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Transition transition = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        transition = new Slide((Gravity.BOTTOM));
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        transition.setDuration(450);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        transition.addTarget(R.id.random);
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        TransitionManager.beginDelayedTransition((ViewGroup) holder.random.getParent(), transition);
+                    }
+                    holder.random.setVisibility(View.GONE);
+                }
+            });
+
+            holder.sendComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(holder.commentInput.getText().toString().trim().isEmpty())
+                    {
+                        Toast.makeText(c,"Please comment something.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        String postId = sliderItems.get(position).getId();
+                        String name = preferences.getString("UserName","");
+                        String email = preferences.getString("UserEmail","");
+                        String comment = holder.commentInput.getText().toString().trim();
+                        String action = "add";
+
+                        sendComment(postId,name,email,comment,action);
+                        holder.random.setVisibility(View.GONE);
+                    }
+                }
+            });
+            holder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Pair[] pairs = new Pair[2];
+                    pairs[0] = new Pair<View, String>(holder.titleView,"news_title");
+                    pairs[1] = new Pair<View, String>(holder.imageView,"news_image");
+                    ActivityOptions options = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        options = ActivityOptions.makeSceneTransitionAnimation((Activity)c,pairs);
+                    }
+
+                    Bitmap bmp = ((BitmapDrawable)holder.imageView.getDrawable()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 10, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    Intent intent = new Intent(c, NewsImage.class);
+                    intent.putExtra("picture", byteArray);
+                    intent.putExtra("text", sliderItems.get(position).getTitle());
+                    c.startActivity(intent,options.toBundle());
+                }
+            });
         }
     }
     @Override
@@ -260,14 +383,17 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     class SliderViewHolder extends RecyclerView.ViewHolder{
 
         //private CardView cardView;
-        private ImageView imageView, shareView, newsView, addImage;
-        private TextView textView,titleView,news_byView,newsTimeView;
+        private ImageView imageView, shareView, newsView, addImage, comment, hideComment, sendComment;
+        private TextView textView,titleView,news_byView,newsTimeView, noCommentFound;
         private View shimmer;
+        private View random;
         private LikeButton bookmark, likeButton;
         private ConstraintLayout poll;
         private CardView addContainer;
         private LinearLayout newsContainer;
-
+        private EditText commentInput;
+        private RecyclerView recyclerView;
+        private ProgressBar commentsProgressBar;
         SliderViewHolder(@NonNull View itemView) {
             super(itemView);
             //cardView = itemView.findViewById(R.id.cardView);
@@ -282,10 +408,20 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
             likeButton = itemView.findViewById(R.id.like_button);
             poll = itemView.findViewById(R.id.poll);
             newsView = itemView.findViewById(R.id.news);
+            comment = itemView.findViewById(R.id.comment);
+            hideComment = itemView.findViewById(R.id.hideComment);
             //add options
             addContainer = itemView.findViewById(R.id.add_container);
             newsContainer = itemView.findViewById(R.id.news_container);
             addImage = itemView.findViewById(R.id.add_image);
+
+            random = itemView.findViewById(R.id.random);
+
+            sendComment = itemView.findViewById(R.id.sendComment);
+            commentInput = itemView.findViewById(R.id.commentInput);
+            recyclerView = itemView.findViewById(R.id.commentsRecyclerview);
+            noCommentFound = itemView.findViewById(R.id.noCommentsFound);
+            commentsProgressBar = itemView.findViewById(R.id.commentsProgressbar);
         }
 
         void setAdd(SliderItem sliderItem){
@@ -606,6 +742,7 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         Window window = myDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.START;
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(c.getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
         RecyclerView recyclerView = myDialog.findViewById(R.id.newsLinkRecycler);
         recyclerView.setLayoutManager(layoutManager);
@@ -613,7 +750,6 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         recyclerView.setAdapter(adapter);
         myDialog.show();
     }
-
     public boolean isLoggedin() {
         preferences = c.getSharedPreferences("PREFERENCE",Context.MODE_PRIVATE);
         String loggedIn = preferences.getString("Login","");
@@ -660,6 +796,146 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 Map<String, String> params = new HashMap<>();
                 params.put("id",id);
                 params.put("value",value);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(c);
+        requestQueue.add(stringRequest);
+    }
+
+    public void loginAlert(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Activity activity = (Activity)c;
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        c.startActivity(new Intent(c, SignIn.class));
+                        activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        c.startActivity(new Intent(c, RegistrationName.class));
+                        activity.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(Html.fromHtml("<font color='#FD676C'>Login OR SignUp</font>"));
+        builder.setMessage(Html.fromHtml("Please Login to use <b>Comment</b>, <b>Bookmark</b>,"
+                + " <b>Poll</b> and <b>Like</b> features of our app"))
+                .setPositiveButton(Html.fromHtml("<font color='#FD676C'>Sign In</font>"), dialogClickListener)
+                .setNegativeButton(Html.fromHtml("<font color='#FD676C'>Sign Up</font>"), dialogClickListener)
+                .setNeutralButton(Html.fromHtml("<font color='#FD676C'>No, Thanks </font>"), dialogClickListener).show();
+    }
+
+    public void loadComments(final String postId, final String email, final RecyclerView recyclerView, final TextView noCommentsFound,
+                             final ProgressBar progressBar){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_FETCH_COMMENT,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("nocommetnrespone", response);
+                        if(response.equals("{\"error\":\"No record found\"}")) {
+                            noCommentsFound.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                        }else{
+                            try {
+                                commentItems = new ArrayList<>();
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0;i<jsonArray.length();i++)
+                                {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    CommentItem commentItem = new CommentItem();
+
+                                    commentItem.setId(jsonObject.getString("id"));
+                                    commentItem.setNewsid(jsonObject.getString("newsid"));
+                                    commentItem.setUname(jsonObject.getString("uname"));
+                                    commentItem.setEmail(jsonObject.getString("email"));
+                                    commentItem.setComment(jsonObject.getString("comment"));
+                                    commentItem.setClike(jsonObject.getString("clike"));
+                                    commentItem.setCdislike(jsonObject.getString("cdislike"));
+                                    commentItem.setStatus(jsonObject.getString("status"));
+                                    commentItem.setUlike(jsonObject.getString("ulike"));
+                                    commentItem.setUdislike(jsonObject.getString("udislike"));
+                                    commentItem.setDelete(jsonObject.getString("delete"));
+
+                                    commentItems.add(commentItem);
+                                }
+
+                                commentsAdapter = new CommentsAdapter(c,commentItems);
+                                recyclerView.setAdapter(commentsAdapter);
+                                recyclerView.setLayoutManager(new CustomLinearLayoutManager(c));
+                                recyclerView.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                                Log.i("funcommentsize", commentItems.get(0).getComment());
+                                Log.i("funcommentsize", String.valueOf(commentItems.size()));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("postid",postId);
+                params.put("email",email);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(c);
+        requestQueue.add(stringRequest);
+    }
+
+    public void sendComment(final String postId, final String name, final String email, final String comment, final String action){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_SEND_COMMENT,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("tagconvertstr", "["+response+"]");
+                        try {
+                            Log.i("tagconvertstr", "["+response+"]");
+                            JSONObject jsonObject = new JSONObject(response);
+                            String success = jsonObject.getString("success").toString();
+                            if(success.equals("1")) {
+                                Toast.makeText(c,"Comment added succesfully",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(c,"Something went wrong!",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("postid",postId);
+                params.put("name",name);
+                params.put("email",email);
+                params.put("comment",comment);
+                params.put("commentid","0");
+                params.put("action",action);
                 return params;
             }
         };
