@@ -6,6 +6,7 @@
     android:id="@+id/cardViewItem"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+   android:onClick="hideShowBar"
     >
 
     <androidx.cardview.widget.CardView

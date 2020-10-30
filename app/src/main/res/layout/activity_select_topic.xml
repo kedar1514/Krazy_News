@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +16,6 @@
         android:transitionName="long_text"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -51,7 +50,9 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/long_text"
+        android:layout_above="@+id/next">
 
         <GridLayout
             android:id="@+id/gridLayout2"
@@ -532,12 +533,14 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="40dp"
         android:layout_gravity="center"
         android:background="@drawable/buttons"
         android:text="Next"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="19sp"
-        android:transitionName="fixed_button"/>
-</LinearLayout>
+        android:transitionName="fixed_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,6 +23,7 @@
 
     <LinearLayout
         android:id="@+id/long_text"
+        android:layout_below="@+id/bold_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:transitionName="long_text"
@@ -62,30 +63,41 @@
             android:textColor="#000000"
             />
     </LinearLayout>
-
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_below="@+id/long_text"
+        android:layout_above="@id/edit_text"
+        android:src="@drawable/registerimage"
+        android:transitionName="main_image"/>
     <EditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:backgroundTint="@color/colorPrimary"
         android:hint="Tell us your Email Id"
-        android:transitionName="edit_text"/>
+        android:transitionName="edit_text"
+        android:layout_above="@+id/sent_code"/>
 
     <TextView
         android:id="@+id/empty_email"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:textColor="#FF0000"
-        android:layout_gravity="center"/>
+        android:layout_below="@+id/edit_text"
+     android:layout_centerHorizontal="true"/>
 
     <ProgressBar
         android:id="@+id/sent_code_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true"
         android:layout_marginTop="50dp"
         android:indeterminateTint="@color/colorPrimary"
         android:visibility="gone"/>
@@ -101,15 +113,13 @@
         android:textColor="#FFFFFF"
         android:textAllCaps="false"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:transitionName="fixed_button"/>
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/registerimage"
-        android:transitionName="main_image"/>
+        android:layout_marginTop="70dp"
+        android:transitionName="fixed_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"/>
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</RelativeLayout>
