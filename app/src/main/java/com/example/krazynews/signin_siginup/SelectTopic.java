@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.krazynews.Constants;
 import com.example.krazynews.MainActivity;
 import com.example.krazynews.R;
 
@@ -42,7 +43,7 @@ public class SelectTopic extends AppCompatActivity {
     private String name, city, user_email, password;
     private Integer topicCount;
     private ImageView check;
-    private String URL_REGISTER = "https://www.krazyfox.in/krazynews/app/index.php";
+    private String URL_REGISTER = Constants.Base_Url+"/app/index.php";
     private LinearLayout linearLayout1, linearLayout2, linearLayout3, linearLayout4, linearLayout5, linearLayout6, linearLayout7, linearLayout8, linearLayout9;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

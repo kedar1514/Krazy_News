@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.krazynews.Constants;
 import com.example.krazynews.MainActivity;
 import com.example.krazynews.NewsLink;
 import com.example.krazynews.Profile;
@@ -77,10 +78,10 @@ public class OtherNewsSliderAdapter extends RecyclerView.Adapter<OtherNewsSlider
     private ViewPager2 viewPager2;
     private Context c, popContext;
     private String flagPoll,From;
-    private String URL_ADD = "https://www.krazyfox.in/krazynews/api/addviews.php";
-    private String URL_POLL = "https://www.krazyfox.in/krazynews/api/poll.php";
-    private String URL_BOOKMARK = "https://www.krazyfox.in/krazynews/api/bookmark.php";
-    private String URL_LIKE = "https://www.krazyfox.in/krazynews/api/like.php";
+    private String URL_ADD = Constants.Base_Url+"/api/addviews.php";
+    private String URL_POLL = Constants.Base_Url+"/api/poll.php";
+    private String URL_BOOKMARK = Constants.Base_Url+"/api/bookmark.php";
+    private String URL_LIKE = Constants.Base_Url+"/api/like.php";
     private String id, email, url, image, title, bookmarkFlag, likeFlag;
     private SharedPreferences preferences;
     public OtherNewsSliderAdapter(Context c,List<SliderItem> sliderItems, ViewPager2 viewPager2, String From) {

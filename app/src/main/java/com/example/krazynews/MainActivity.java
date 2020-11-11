@@ -110,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
     private View shimer_home_page;
     private String notificationType;
     private boolean flag;
-    private String URL_USER_VIEW = "https://www.krazyfox.in/krazynews/api/userview.php";
-    private String URL_VIEW = "https://www.krazyfox.in/krazynews/api/views.php";
-    private String URL_IMAGE = "https://www.krazyfox.in/krazynews";
-    private String URL_TOKEN = "https://www.krazyfox.in/krazynews/app/token.php", token;
+    private String URL_USER_VIEW = Constants.Base_Url+"/api/userview.php";
+    private String URL_VIEW = Constants.Base_Url+"/api/views.php";
+    private String URL_IMAGE = Constants.Base_Url+"";
+    private String URL_TOKEN = Constants.Base_Url+"/app/token.php", token;
 
     private String language;
     private ProgressBar progressBar;
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //fetching news
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.krazyfox.in/krazynews/api/")
+                .baseUrl(Constants.Base_Url+"/api/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         MainInterface mainInterface = retrofit.create(MainInterface.class);
@@ -667,7 +667,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNotificationNews(String notificationsNewsId, String email){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.krazyfox.in/krazynews/api/")
+                .baseUrl(Constants.Base_Url+"/api/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         ExtraNewsInterface extraNewsInterface = retrofit.create(ExtraNewsInterface.class);

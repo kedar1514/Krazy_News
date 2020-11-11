@@ -234,7 +234,7 @@ public class DashBoard extends Activity {
                 if(checkConnection())
                 {
                     Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
-                    intent.putExtra("url","https://www.krazyfox.in/krazynews/api/");
+                    intent.putExtra("url",Constants.Base_Url+"/api/");
                     intent.putExtra("from","trending");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
@@ -252,7 +252,7 @@ public class DashBoard extends Activity {
                     if(isLoggedin())
                     {
                         Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
-                        intent.putExtra("url","https://www.krazyfox.in/krazynews/api/fetchbookmark.php");
+                        intent.putExtra("url",Constants.Base_Url+"/api/fetchbookmark.php");
                         intent.putExtra("from","bookmark");
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);
@@ -274,7 +274,7 @@ public class DashBoard extends Activity {
                     if(isLoggedin())
                     {
                         Intent intent =  new Intent(DashBoard.this,OtherNewsAcivity.class);
-                        intent.putExtra("url","https://www.krazyfox.in/krazynews/api/");
+                        intent.putExtra("url",Constants.Base_Url+"/api/");
                         intent.putExtra("from","unread");
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_in_right);

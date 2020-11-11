@@ -30,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.krazynews.Constants;
 import com.example.krazynews.ForgotPasswordEmail;
 import com.example.krazynews.MainActivity;
 import com.example.krazynews.NewsLink;
@@ -64,8 +65,8 @@ public class SignIn extends AppCompatActivity {
     private LinearLayout longText;
     private ProgressBar progressBar;
     private ImageView logo;
-    private String URL_LOGIN = "https://www.krazyfox.in/krazynews/app/login.php";
-    private String URL_PASS = "https://www.krazyfox.in/krazynews/forgot-password.php";
+    private String URL_LOGIN = Constants.Base_Url+"/app/login.php";
+    private String URL_PASS = Constants.Base_Url+"/forgot-password.php";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

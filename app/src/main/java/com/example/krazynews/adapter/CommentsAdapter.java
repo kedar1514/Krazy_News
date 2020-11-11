@@ -19,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.krazynews.CommentItem;
+import com.example.krazynews.Constants;
 import com.example.krazynews.CustomLinearLayoutManager;
 import com.example.krazynews.R;
 import com.example.krazynews.signin_siginup.ChooseTopicSignIn;
@@ -39,7 +40,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentsHolder> {
-    String URL_LIKE_DISLIKE = "https://www.krazyfox.in/krazynews/api/likedislike.php";
+    String URL_LIKE_DISLIKE = Constants.Base_Url+"/api/likedislike.php";
     LayoutInflater inflater;
     List<CommentItem> commentItems;
     Context context;

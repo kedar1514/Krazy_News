@@ -49,9 +49,9 @@ import java.util.Map;
 public class OtherNewsAcivity extends AppCompatActivity {
 
     private String URL_NEWS, From, email, lang;
-    private String URL_IMAGE = "https://www.krazyfox.in/krazynews";
-    private String URL_VIEW = "https://www.krazyfox.in/krazynews/api/views.php";
-    private String URL_USER_VIEW = "https://www.krazyfox.in/krazynews/api/userview.php";
+    private String URL_IMAGE = Constants.Base_Url+"";
+    private String URL_VIEW = Constants.Base_Url+"/api/views.php";
+    private String URL_USER_VIEW = Constants.Base_Url+"/api/userview.php";
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private TextView toolbarName;

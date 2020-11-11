@@ -32,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.krazynews.Constants;
 import com.example.krazynews.R;
 
 import org.json.JSONException;
@@ -52,9 +53,9 @@ public class GetEmail extends AppCompatActivity {
     private boolean otpSentResult,emailExistVal;
     private String OTP;
     private String name, city, user_email;
-    private String URL_OTP = "https://www.krazyfox.in/krazynews/app/otp.php";
-    private String URL_OTP_VALIDATE = "https://www.krazyfox.in/krazynews/app/otp_validate.php";
-    private String URL_EMAIL_CHECK = "https://www.krazyfox.in/krazynews/app/emailCheck.php";
+    private String URL_OTP = Constants.Base_Url+"/app/otp.php";
+    private String URL_OTP_VALIDATE = Constants.Base_Url+"/app/otp_validate.php";
+    private String URL_EMAIL_CHECK = Constants.Base_Url+"/app/emailCheck.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
